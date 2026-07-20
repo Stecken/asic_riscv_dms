@@ -19,7 +19,7 @@
       "problemMatcher": []
     },
     {
-      "label": "HDL: Run all tests",
+      "label": "HDL: Test",
       "type": "shell",
       "command": "make test",
       "group": {
@@ -36,7 +36,7 @@
       "problemMatcher": []
     },
     {
-      "label": "HDL: Generate waveform",
+      "label": "HDL: Wave",
       "type": "shell",
       "command": "make wave TEST=core_basic",
       "problemMatcher": []
@@ -46,7 +46,37 @@
       "type": "shell",
       "command": "make open-wave TEST=core_basic",
       "dependsOrder": "sequence",
-      "dependsOn": "HDL: Generate waveform",
+      "dependsOn": "HDL: Wave",
+      "problemMatcher": []
+    },
+    {
+      "label": "ChipInventor: Generate package",
+      "type": "shell",
+      "command": "make chipinventor-package",
+      "problemMatcher": []
+    },
+    {
+      "label": "ChipInventor: Check package",
+      "type": "shell",
+      "command": "make chipinventor-check",
+      "problemMatcher": []
+    },
+    {
+      "label": "ChipInventor: Show status",
+      "type": "shell",
+      "command": "make chipinventor-status",
+      "problemMatcher": []
+    },
+    {
+      "label": "ChipInventor: Create validation record",
+      "type": "shell",
+      "command": "make chipinventor-validation-record DATE=${input:validationDate}",
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenLane: Readiness",
+      "type": "shell",
+      "command": "make openlane-readiness",
       "problemMatcher": []
     },
     {
@@ -69,6 +99,12 @@
     }
   ],
   "inputs": [
+    {
+      "id": "validationDate",
+      "type": "promptString",
+      "description": "Manual ChipInventor validation date (YYYY-MM-DD)",
+      "default": "YYYY-MM-DD"
+    },
     {
       "id": "schematicModule",
       "type": "pickString",

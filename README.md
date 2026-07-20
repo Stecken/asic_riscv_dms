@@ -3,7 +3,8 @@
 Laboratório colaborativo para um processador RISC-V multiciclo de 32 bits em
 Verilog. A árvore oficial de RTL é `rtl/`, o top é `riscv_top` e os comandos do
 `Makefile` são a interface única para desenvolvimento local, GitHub Codespaces
-e GitHub Actions.
+e GitHub Actions. Top, testbench, firmware, manifesto e perfil de linguagem são
+centralizados em `config/project.mk`.
 
 O projeto implementa um subconjunto de RV32I; ele **não** declara conformidade
 RV32I completa. Consulte [docs/isa-status.md](docs/isa-status.md) antes de usar
@@ -19,6 +20,8 @@ make setup-check
 make test
 make wave
 make synth
+make chipinventor-package
+make chipinventor-check
 ```
 
 Use `make help` para listar todos os alvos.
@@ -38,13 +41,16 @@ Graphviz, Make, Git, Python 3 e pip. O `postCreateCommand` executa
 ## Organização
 
 - `rtl/`: única fonte oficial e o manifesto determinístico `rtl/files.f`.
-- `tb/unit/`: testes unitários self-checking em Verilog/SystemVerilog.
-- `tb/core/`: teste integrado e configuração inicial de sinais do Surfer.
-- `tb/programs/`: Assembly, `.hex` reproduzível e resultados esperados.
+- `tb/portable/`: testes unitários e integrado self-checking, sem runtime externo.
+- `tb/advanced/`: área explícita para futuros testes fora do perfil portátil.
+- `tb/support/`: Assembly, `.hex`, resultados esperados e sinais do Surfer.
+- `config/`: metadados canônicos e template do pacote local.
 - `scripts/`: validação de fontes, assembler mínimo, síntese e esquemas.
-- `docs/`: auditoria, arquitetura, verificação, sinais, síntese e ISA.
+- `validation/chipinventor/`: formulários manuais sem resultados presumidos.
+- `openlane/`: placeholders físicos, sem decisões nem execução de P&R.
+- `docs/`: auditoria, arquitetura, verificação, sinais, síntese, ISA e readiness.
 - `legacy/original-export/`: export original preservado; nunca entra no build.
-- `build/`, `reports/`, `waves/`: artefatos locais descartáveis e ignorados.
+- `build/`, `dist/`, `waves/`: artefatos locais descartáveis e ignorados.
 
 ## Simulação e testes
 
@@ -57,9 +63,11 @@ make test
 ```
 
 Os testes retornam código diferente de zero por `$fatal` quando uma verificação
-falha. O teste integrado carrega `tb/programs/core_basic.hex` por parâmetro,
+falha. O teste integrado carrega `tb/support/firmware/core_basic.hex` por parâmetro,
 observa a interface condicional `RISCV_DEBUG` e mantém um modelo dos writes do
 banco de registradores; ele não acessa arrays internos do DUT por hierarquia.
+Ele também possui timeout e sempre gera um VCD, inclusive quando executado no
+pacote isolado.
 
 Para alterar um programa, edite o `.S`, execute `make programs` e confira
 `make programs-check`. O assembler incluído cobre somente o subconjunto
@@ -77,7 +85,7 @@ O primeiro comando imprime o caminho exato, normalmente
 [Surfer](https://marketplace.visualstudio.com/items?itemName=surfer-project.surfer)
 é instalada e abre `.vcd` dentro do VS Code no navegador. Se necessário, clique
 com o botão direito no arquivo e selecione **Open With > Surfer**. Depois de
-abrir, carregue `tb/core/core_basic.sucl` no menu de command files para adicionar
+abrir, carregue `tb/support/core_basic.sucl` no menu de command files para adicionar
 o conjunto inicial de sinais.
 
 A geração e a validade do VCD foram testadas no devcontainer. A interação da
@@ -100,9 +108,59 @@ Veja [docs/synthesis.md](docs/synthesis.md).
 
 ## Tarefas do VS Code
 
-Use **Terminal > Run Task** para executar lint, build, todos os testes, teste do
-core, waveform, abertura do waveform, síntese, esquema ou limpeza. As tarefas
-chamam exatamente os mesmos alvos usados no terminal e no CI.
+Use **Terminal > Run Task** para executar `HDL: Lint`, `HDL: Build`, `HDL: Test`
+e `HDL: Wave`. Também existem tarefas para gerar e checar o pacote ChipInventor,
+mostrar o status da última validação manual, criar um formulário semanal e
+listar a prontidão OpenLane. Elas chamam os mesmos alvos usados no terminal e,
+quando aplicável, no CI.
+
+## Ponte para ChipInventor
+
+O fluxo prepara uma entrega autocontida, mas não afirma que o ChipInventor a
+aceita. O formato `config.json` é interno ao repositório e deve ser comparado ao
+Block Guide e ao Submission Guide oficiais antes do upload.
+
+Fluxo diário local:
+
+```bash
+make lint
+make build
+make test
+make chipinventor-package
+make chipinventor-check
+```
+
+O pacote determinístico é criado em `dist/chipinventor/` com `rtl/`, `tb/`,
+`firmware/`, `config.json`, `sources.txt`, `MANIFEST.txt` e `VERSION.txt`.
+`make chipinventor-check` o copia para uma área temporária, recompila, simula e
+verifica referências, módulos, firmware, JSON, hashes e waveform. Esse resultado
+é uma checagem de infraestrutura local, não uma validação da plataforma.
+
+Fluxo semanal/manual:
+
+```bash
+make chipinventor-status
+make chipinventor-package
+make chipinventor-check
+make chipinventor-validation-record DATE=YYYY-MM-DD
+```
+
+O último comando cria somente um formulário vazio. Depois de uma execução real,
+um responsável humano registra evidências e, opcionalmente, cria manualmente a
+tag `chipinventor-ok-YYYY-MM-DD`. Scripts e CI não criam tags, releases nem
+resultados de validação. Consulte
+[docs/chipinventor-readiness.md](docs/chipinventor-readiness.md) e
+[docs/block-guide-checklist.md](docs/block-guide-checklist.md) antes do teste.
+
+Papéis separados:
+
+- infraestrutura mantém empacotamento, CI, hashes, portabilidade e documentação;
+- design HDL responde pelo comportamento, ISA, microarquitetura e interfaces;
+- validação manual confirma o comportamento real no ChipInventor e registra evidências;
+- implementação física define PDK, clock, área, pinout, alimentação e constraints.
+
+`make openlane-readiness` apenas lista os parâmetros físicos ainda
+`PENDENTE_DE_CONFIRMACAO`; ele não executa OpenLane, P&R ou GDS.
 
 ## Colaboração
 
@@ -111,7 +169,8 @@ chamam exatamente os mesmos alvos usados no terminal e no CI.
 - Execute `make ci` antes de enviar.
 - Inclua teste antes de corrigir comportamento funcional.
 - Não altere microarquitetura sem um registro em `docs/decisions/`.
-- Não versione `build/`, `reports/`, `waves/`, VCDs, executáveis ou logs locais.
+- Não versione `build/`, `dist/`, `waves/`, VCDs, executáveis ou logs locais.
+- Não trate `make chipinventor-check` ou CI verde como validação no ChipInventor.
 - Não edite netlists, `.hex` gerado ou export legado como se fossem RTL oficial.
 
 Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e a auditoria inicial em

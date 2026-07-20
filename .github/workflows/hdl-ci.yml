@@ -40,8 +40,26 @@ jobs:
             verilator \
             yosys
 
-      - name: Run reproducible HDL baseline
-        run: make ci
+      - name: Check development environment
+        run: make setup-check
+
+      - name: Lint official RTL
+        run: make lint
+
+      - name: Build official RTL top
+        run: make build
+
+      - name: Run self-checking tests
+        run: make test
+
+      - name: Run synthesis baseline
+        run: make synth
+
+      - name: Generate ChipInventor handoff package
+        run: make chipinventor-package
+
+      - name: Check ChipInventor handoff package in isolation
+        run: make chipinventor-check
 
       - name: Generate requested waveform
         if: github.event_name == 'workflow_dispatch' && inputs.upload_waveform
@@ -53,13 +71,34 @@ jobs:
         run: make wave TEST=core_basic
 
       - name: Upload failure logs
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: hdl-failure-logs
+          name: hdl-validation-logs
           path: build/logs/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Upload ChipInventor package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chipinventor-package
+          path: dist/chipinventor/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload ChipInventor manifest and portability report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chipinventor-evidence
+          path: |
+            dist/chipinventor/MANIFEST.txt
+            dist/chipinventor/VERSION.txt
+            reports/chipinventor-portability.md
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Upload waveforms
         if: failure() || (github.event_name == 'workflow_dispatch' && inputs.upload_waveform)

@@ -47,10 +47,12 @@ demonstrando que uma divergência não termina falsamente em verde.
 
 ## `.gitignore`
 
-`git status --ignored` confirmou como ignorados `build/`, `reports/`, `waves/`,
+`git status --ignored` confirmou como ignorados `build/`, relatórios gerados, `waves/`,
 `scripts/__pycache__/`, o executável VVP legado e os VCDs legados. Fontes,
 Assembly, `.hex` reproduzível, configurações compartilhadas e logs históricos
-explicitamente preservados continuam visíveis para versionamento.
+explicitamente preservados continuam visíveis para versionamento. A política
+atual também ignora `dist/` e mantém somente o inventário estático
+`reports/chipinventor-portability.md` visível para versionamento.
 
 ## Limites desta validação
 

@@ -1,4 +1,4 @@
-# Architectural results checked by tb/core/tb_core.v
+# Architectural results checked by tb/portable/tb_core.v
 x1=0x00000005
 x2=0x00000003
 x3=0x00000008

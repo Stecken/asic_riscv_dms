@@ -9,6 +9,7 @@
   },
   "search.exclude": {
     "build": true,
+    "dist": true,
     "legacy": true,
     "reports": true,
     "waves": true
@@ -18,6 +19,7 @@
   "systemverilog.compileOnSave": false,
   "systemverilog.excludeIndexing": [
     "build/**",
+    "dist/**",
     "legacy/**"
   ],
   "terminal.integrated.defaultProfile.linux": "bash"

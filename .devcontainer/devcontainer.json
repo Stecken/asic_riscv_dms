@@ -23,6 +23,7 @@
         "systemverilog.compileOnSave": false,
         "systemverilog.excludeIndexing": [
           "build/**",
+          "dist/**",
           "legacy/**"
         ]
       }

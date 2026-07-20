@@ -2,7 +2,7 @@
 `default_nettype none
 
 `ifndef PROGRAM_HEX
-`define PROGRAM_HEX "tb/programs/core_basic.hex"
+`define PROGRAM_HEX "firmware/core_basic.hex"
 `endif
 `ifndef PROGRAM_WORDS
 `define PROGRAM_WORDS 25
@@ -47,7 +47,7 @@ module tb_core;
     integer cycles;
     integer errors;
     integer i;
-    string wave_path;
+    reg [1023:0] wave_path;
 
     riscv_top #(
         .MEMORY_INIT_FILE  (`PROGRAM_HEX),
@@ -107,10 +107,11 @@ module tb_core;
             register_model[i] = 32'b0;
         end
 
-        if ($value$plusargs("wave=%s", wave_path)) begin
-            $dumpfile(wave_path);
-            $dumpvars(0, tb_core);
+        if (!$value$plusargs("wave=%s", wave_path)) begin
+            wave_path = "core_basic.vcd";
         end
+        $dumpfile(wave_path);
+        $dumpvars(0, tb_core);
 
         repeat (2) @(posedge clk);
         #1 rst = 1'b0;

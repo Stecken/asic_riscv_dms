@@ -9,6 +9,11 @@
 *.md text eol=lf
 *.json text eol=lf
 *.yml text eol=lf
+*.yaml text eol=lf
+*.mk text eol=lf
+*.cfg text eol=lf
+*.sdc text eol=lf
+*.txt text eol=lf
 Makefile text eol=lf
 
 # The cloud-tool export is archival evidence; preserve its bytes and omit noisy diffs.

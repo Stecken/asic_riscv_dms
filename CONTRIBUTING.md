@@ -23,7 +23,7 @@
 
 ## Programas de teste
 
-Edite `tb/programs/*.S`, não o `.hex` diretamente:
+Edite `tb/support/firmware/*.S`, não o `.hex` diretamente:
 
 ```bash
 make programs
@@ -46,4 +46,5 @@ make synth
 
 Se o comportamento temporal for relevante, gere `make wave` e anexe o VCD ao
 PR como artifact ou evidência; não faça commit do VCD. Artefatos em `build/`,
-`reports/` e `waves/` são descartáveis e estão no `.gitignore`.
+`dist/`, `waves/` e relatórios de síntese são descartáveis. O relatório estático
+`reports/chipinventor-portability.md` é a única exceção versionável em `reports/`.

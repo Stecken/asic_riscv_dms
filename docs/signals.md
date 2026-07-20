@@ -31,7 +31,7 @@ quando `RISCV_DEBUG` está definido e aparecem no escopo `tb_core`.
 2. Abra `waves/core_basic.vcd` no Explorer.
 3. Selecione Surfer quando o VS Code perguntar pelo editor.
 4. No Surfer, use **File > Run command file** e escolha
-   `tb/core/core_basic.sucl` para adicionar os sinais principais.
+   `tb/support/core_basic.sucl` para adicionar os sinais principais.
 
 Também é possível executar `make open-wave`. Se a associação automática falhar,
 use **Open With > Surfer** e confirme que não há outra extensão disputando VCD.

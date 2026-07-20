@@ -1,7 +1,9 @@
 # Disposable HDL outputs
 /build/
-/reports/
+/reports/*
+!/reports/chipinventor-portability.md
 /waves/
+/dist/
 *.vcd
 *.fst
 *.lxt

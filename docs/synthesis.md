@@ -2,8 +2,8 @@
 
 ## Síntese
 
-`make synth` executa `scripts/run_synthesis.ys` com somente `rtl/files.f` e top
-`riscv_top`. O fluxo faz `hierarchy -check`, `proc`, otimizações, processamento
+`make synth` executa `scripts/run_synthesis.py`, que lê somente `rtl/files.f` e
+o top de `config/project.mk`. O fluxo faz `hierarchy -check`, `proc`, otimizações, processamento
 de FSM/memória, `check`, netlist, JSON e `stat`.
 
 A definição `RISCV_DEBUG` é ativada para expor comportamento observável no top.

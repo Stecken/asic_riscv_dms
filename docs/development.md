@@ -47,6 +47,10 @@ make test-core
 make wave TEST=core_basic
 make synth
 make schematic MODULE=alu
+make chipinventor-package
+make chipinventor-check
+make chipinventor-status
+make openlane-readiness
 make clean
 make ci
 ```
@@ -60,7 +64,9 @@ duplicatas.
 
 O `.gitignore` raiz cobre outputs de simulação/síntese, waveforms, executáveis
 VVP/objetos, caches Python, workdirs comuns de EDA, estado de editor e arquivos
-`.env`. Os `.hex` em `tb/programs/` são deliberadamente versionados porque são
+`.env`. Os `.hex` em `tb/support/firmware/` são deliberadamente versionados porque são
 entradas reproduzíveis da simulação. O diretório `legacy/` é somente histórico.
+`dist/` é sempre descartável; em `reports/`, somente
+`chipinventor-portability.md` é mantido como inventário estático versionável.
 O `.gitattributes` fixa LF para fontes ativas e preserva os bytes/line endings do
 export original sem produzir diffs gigantes de conteúdo arquivado.

@@ -1,0 +1,22 @@
+{
+  "_notice": "Repository package metadata only; this is not an official ChipInventor schema.",
+  "package_format_version": "@PACKAGE_FORMAT_VERSION@",
+  "project_name": "@PROJECT_NAME@",
+  "language_profile": "@LANGUAGE_PROFILE@",
+  "design": {
+    "top_module": "@TOP_MODULE@",
+    "sources_file": "sources.txt",
+    "rtl_sources": "@RTL_SOURCES_JSON@"
+  },
+  "simulation": {
+    "testbench_top": "@TB_TOP@",
+    "testbench_source": "tb/@TB_FILENAME@",
+    "firmware": "firmware/@DEFAULT_FIRMWARE@",
+    "waveform": "core_basic.vcd"
+  },
+  "chipinventor_requirements": {
+    "official_schema": "PENDENTE_DE_CONFIRMACAO",
+    "block_guide_version": "PENDENTE_DE_CONFIRMACAO",
+    "submission_guide_version": "PENDENTE_DE_CONFIRMACAO"
+  }
+}

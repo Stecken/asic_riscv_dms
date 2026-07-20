@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "eirikpre.systemverilog",
+    "surfer-project.surfer",
+    "ms-vscode.makefile-tools",
+    "ms-python.python",
+    "GitHub.vscode-pull-request-github"
+  ]
+}

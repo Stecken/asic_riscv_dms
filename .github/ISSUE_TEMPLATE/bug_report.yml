@@ -1,0 +1,51 @@
+name: Bug no processador
+description: Relate uma divergência funcional reproduzível no RTL ou na verificação.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: input
+    id: module
+    attributes:
+      label: Instrução ou módulo
+      placeholder: "Ex.: BEQ, datapath, memory"
+    validations:
+      required: true
+  - type: textarea
+    id: program
+    attributes:
+      label: Programa de teste ou reprodução
+      description: Inclua o menor Assembly e os comandos executados.
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: Valor ou comportamento esperado
+    validations:
+      required: true
+  - type: input
+    id: observed
+    attributes:
+      label: Valor ou comportamento observado
+    validations:
+      required: true
+  - type: input
+    id: cycle
+    attributes:
+      label: Ciclo aproximado
+  - type: textarea
+    id: signals
+    attributes:
+      label: Sinais relevantes
+      placeholder: "PC, estado, instrução, ALU, writeback, memória..."
+  - type: input
+    id: waveform
+    attributes:
+      label: Link para waveform ou artifact
+  - type: input
+    id: commit
+    attributes:
+      label: Commit onde ocorreu
+    validations:
+      required: true

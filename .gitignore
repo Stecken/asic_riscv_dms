@@ -1,0 +1,72 @@
+# Disposable HDL outputs
+/build/
+/reports/
+/waves/
+*.vcd
+*.fst
+*.lxt
+*.lxt2
+*.ghw
+*.vvp
+*.out
+*.o
+*.obj
+*.exe
+*.log
+
+# Intentionally retained provenance logs from the original cloud-tool export
+!legacy/original-export/**/*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# EDA tool work directories and generated implementation data
+.Xil/
+*.jou
+*.str
+*.wdb
+*.wlf
+*.fsdb
+*.ucdb
+*.vpd
+*.vcd.gz
+*.fst.gz
+*.dcp
+*.bit
+*.bin
+*.sof
+*.pof
+*.qws
+*.qpf
+*.qsf.bak
+db/
+incremental_db/
+output_files/
+work/
+transcript
+
+# Editor and operating-system state (keep the shared VS Code files below)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+*.code-workspace
+.idea/
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Local environment overrides and credentials
+.env
+.env.*
+!.env.example

@@ -1,0 +1,24 @@
+{
+  "files.associations": {
+    "*.v": "systemverilog",
+    "*.sv": "systemverilog",
+    "*.vh": "systemverilog"
+  },
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "search.exclude": {
+    "build": true,
+    "legacy": true,
+    "reports": true,
+    "waves": true
+  },
+  "makefile.configureOnOpen": false,
+  "systemverilog.compilerType": "Verilator",
+  "systemverilog.compileOnSave": false,
+  "systemverilog.excludeIndexing": [
+    "build/**",
+    "legacy/**"
+  ],
+  "terminal.integrated.defaultProfile.linux": "bash"
+}

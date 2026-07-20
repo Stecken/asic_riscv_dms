@@ -1,0 +1,43 @@
+name: Funcionalidade HDL
+description: Proponha uma instrução, módulo ou melhoria de infraestrutura.
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: input
+    id: instruction_module
+    attributes:
+      label: Instrução ou módulo
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Comportamento esperado
+    validations:
+      required: true
+  - type: textarea
+    id: interface
+    attributes:
+      label: Interface afetada
+      description: Liste portas, sinais, estados ou arquivos oficiais.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de aceitação
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Testes necessários
+      description: Inclua unit, core, waveform e síntese quando aplicável.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependências e decisões
+      description: Indique ADR ou outras issues necessárias.

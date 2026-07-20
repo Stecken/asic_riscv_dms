@@ -1,0 +1,80 @@
+name: HDL CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      upload_waveform:
+        description: Generate and publish the core_basic waveform
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hdl-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install HDL toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            graphviz \
+            iverilog \
+            python3-pip \
+            verilator \
+            yosys
+
+      - name: Run reproducible HDL baseline
+        run: make ci
+
+      - name: Generate requested waveform
+        if: github.event_name == 'workflow_dispatch' && inputs.upload_waveform
+        run: make wave TEST=core_basic
+
+      - name: Re-run core test with waveform after failure
+        if: failure()
+        continue-on-error: true
+        run: make wave TEST=core_basic
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hdl-failure-logs
+          path: build/logs/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload waveforms
+        if: failure() || (github.event_name == 'workflow_dispatch' && inputs.upload_waveform)
+        uses: actions/upload-artifact@v4
+        with:
+          name: hdl-failure-waveforms
+          path: waves/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload synthesis reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthesis-reports
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30

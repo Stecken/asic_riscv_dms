@@ -1,0 +1,26 @@
+# Initial Surfer signal set for waves/core_basic.vcd.
+variable_add tb_core.clk
+variable_add tb_core.rst
+variable_add tb_core.debug_old_pc
+variable_add tb_core.debug_pc
+variable_add tb_core.debug_instruction
+variable_add tb_core.debug_state
+variable_add tb_core.debug_opcode
+variable_add tb_core.debug_funct3
+variable_add tb_core.debug_rs1
+variable_add tb_core.debug_rs2
+variable_add tb_core.debug_rd
+variable_add tb_core.debug_operand_a
+variable_add tb_core.debug_operand_b
+variable_add tb_core.debug_immediate
+variable_add tb_core.debug_alu_control
+variable_add tb_core.debug_alu_a
+variable_add tb_core.debug_alu_b
+variable_add tb_core.debug_alu_result
+variable_add tb_core.debug_zero
+variable_add tb_core.debug_reg_write
+variable_add tb_core.debug_writeback
+variable_add tb_core.debug_mem_write
+variable_add tb_core.debug_mem_address
+variable_add tb_core.debug_mem_read_data
+variable_add tb_core.debug_mem_write_data

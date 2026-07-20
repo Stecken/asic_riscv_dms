@@ -1,0 +1,88 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "HDL: Lint",
+      "type": "shell",
+      "command": "make lint",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Build",
+      "type": "shell",
+      "command": "make build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Run all tests",
+      "type": "shell",
+      "command": "make test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Run core test",
+      "type": "shell",
+      "command": "make test-core TEST=core_basic",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Generate waveform",
+      "type": "shell",
+      "command": "make wave TEST=core_basic",
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Open waveform",
+      "type": "shell",
+      "command": "make open-wave TEST=core_basic",
+      "dependsOrder": "sequence",
+      "dependsOn": "HDL: Generate waveform",
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Synthesize",
+      "type": "shell",
+      "command": "make synth",
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Generate schematic",
+      "type": "shell",
+      "command": "make schematic MODULE=${input:schematicModule}",
+      "problemMatcher": []
+    },
+    {
+      "label": "HDL: Clean",
+      "type": "shell",
+      "command": "make clean",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "schematicModule",
+      "type": "pickString",
+      "description": "Official RTL module to render",
+      "options": [
+        "alu",
+        "register_file",
+        "memory",
+        "immediate_gen",
+        "control",
+        "datapath",
+        "riscv_top"
+      ],
+      "default": "alu"
+    }
+  ]
+}

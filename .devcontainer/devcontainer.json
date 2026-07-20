@@ -1,0 +1,31 @@
+{
+  "name": "RISC-V HDL Laboratory",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "eirikpre.systemverilog",
+        "surfer-project.surfer",
+        "ms-vscode.makefile-tools",
+        "ms-python.python",
+        "GitHub.vscode-pull-request-github"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "makefile.configureOnOpen": false,
+        "systemverilog.compilerType": "Verilator",
+        "systemverilog.compileOnSave": false,
+        "systemverilog.excludeIndexing": [
+          "build/**",
+          "legacy/**"
+        ]
+      }
+    }
+  }
+}

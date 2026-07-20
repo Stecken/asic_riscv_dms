@@ -1,0 +1,14 @@
+VCD info: dumpfile /var/www/html/beta/v1/editor/efs-users/1156/w/design/testbench/testbench.vcd opened for output.
+=== Teste de Instruções ===
+x1  = 15 (esperado 15)
+x2  = 6 (esperado 6)
+x3  = 15 (esperado 15)
+x4  = 9 (esperado 9)
+x5  = 3 (esperado 3)
+x6  = 1 (esperado 1)
+x7  = 0 (esperado 0)
+x8  = 42 (esperado 42)
+x9  = 44 (esperado 44)
+x10 = 77 (esperado 77)
+==========================
+/var/www/html/beta/v1/editor/efs-users/1156/w/design/testbench/testbench.v:36: $finish called at 1820 (1s)

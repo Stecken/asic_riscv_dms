@@ -1,4 +1,7 @@
-module datapath (
+module datapath #(
+    parameter MEMORY_INIT_FILE = "",
+    parameter integer MEMORY_INIT_WORDS = 0
+) (
     input         clk,
     input         rst,
     // Sinais de controle
@@ -6,6 +9,7 @@ module datapath (
     input         ir_write,
     input         reg_write,
     input         mem_write,
+    input         addr_src,
     input  [1:0]  pc_src,
     input  [1:0]  alu_src_a,
     input  [1:0]  alu_src_b,
@@ -29,6 +33,9 @@ module datapath (
 
     // Fios internos
     wire [31:0] mem_rd;
+    wire [31:0] mem_addr;
+    wire [31:0] imem_rd;
+    wire [31:0] dmem_rd;
     wire [31:0] rd1, rd2;
     wire [31:0] alu_result;
     wire [31:0] src_a, src_b;
@@ -58,14 +65,26 @@ module datapath (
                       opcode == 7'b0010111) ? imm_u :
                                               imm_i;
 
-    // Memória
-    memory mem (
-        .clk  (clk),
-        .we   (mem_write),
-        .addr (pc),
-        .wd   (b),
-        .rd   (mem_rd)
+    // Memórias separadas de instrução e dados
+    assign mem_addr = addr_src ? alu_out : pc;
+
+    imem #(
+        .INIT_FILE  (MEMORY_INIT_FILE),
+        .INIT_WORDS (MEMORY_INIT_WORDS)
+    ) imem_inst (
+        .addr (mem_addr),
+        .rd   (imem_rd)
     );
+
+    dmem dmem_inst (
+        .clk  (clk),
+        .we   (mem_write & addr_src),
+        .addr (mem_addr),
+        .wd   (b),
+        .rd   (dmem_rd)
+    );
+
+    assign mem_rd = addr_src ? dmem_rd : imem_rd;
 
     // Banco de registradores
     register_file rf (

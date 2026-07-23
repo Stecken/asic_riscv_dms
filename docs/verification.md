@@ -14,9 +14,14 @@ status é preservado através dos pipelines com `pipefail`.
   negativos e wrap natural em 32 bits.
 - `tb_register_file`: duas leituras, escrita, preservação, x0 e tentativa de
   escrita em x0.
-- `tb_memory`: estado inicial, escrita síncrona, leitura e semântica word-addressed.
+- `tb_imem`: leitura, estado inicial e semântica word-addressed da memória de instruções.
+- `tb_dmem`: estado inicial, escrita síncrona, leitura e semântica word-addressed da memória de dados.
 - `tb_immediate_gen`: formatos I, S, B, U, J e default sem imediato.
 - `tb_control`: SRA, writeback R, caminho LW/`addr_src` e BEQ tomado.
+
+O teste integrado executa SW/LW na DMEM enquanto o fetch continua vindo da
+IMEM. `make test-legacy` repete uma verificação de isolamento nas duas formas do
+export antigo.
 
 ## Teste integrado
 

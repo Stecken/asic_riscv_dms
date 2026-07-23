@@ -64,6 +64,9 @@ module datapath #(
     wire [4:0]  rs1;
     wire [4:0]  rs2;
     wire [4:0]  rd;
+    wire        dmem_sel;
+    wire [31:0] imem_rd;
+    wire [31:0] dmem_rd;
 
     assign opcode   = ir[6:0];
     assign funct3   = ir[14:12];
@@ -79,16 +82,26 @@ module datapath #(
 
     assign mem_address = addr_src ? alu_out : pc;
 
-    memory #(
+    // addr_src=0 fetches an instruction; addr_src=1 accesses data.
+    assign dmem_sel = addr_src;
+
+    imem #(
         .INIT_FILE  (MEMORY_INIT_FILE),
         .INIT_WORDS (MEMORY_INIT_WORDS)
-    ) memory_inst (
+    ) imem_inst (
+        .addr (mem_address),
+        .rd   (imem_rd)
+    );
+
+    dmem dmem_inst (
         .clk  (clk),
-        .we   (mem_write),
+        .we   (mem_write & dmem_sel),
         .addr (mem_address),
         .wd   (operand_b),
-        .rd   (mem_read_data)
+        .rd   (dmem_rd)
     );
+
+    assign mem_read_data = dmem_sel ? dmem_rd : imem_rd;
 
     register_file rf (
         .clk (clk),

@@ -44,8 +44,27 @@ module register_file (
     end
 endmodule
 
-// ============ MEMORY ============
-module memory (
+// ============ INSTRUCTION MEMORY ============
+module imem #(
+    parameter INIT_FILE = "",
+    parameter integer INIT_WORDS = 0
+) (
+    input  [31:0] addr,
+    output [31:0] rd
+);
+    reg [31:0] mem [0:255];
+    integer i;
+    initial begin
+        for (i = 0; i < 256; i = i + 1)
+            mem[i] = 32'b0;
+        if ((INIT_FILE != "") && (INIT_WORDS > 0))
+            $readmemh(INIT_FILE, mem, 0, INIT_WORDS - 1);
+    end
+    assign rd = mem[addr[9:2]];
+endmodule
+
+// ============ DATA MEMORY ============
+module dmem (
     input         clk, we,
     input  [31:0] addr, wd,
     output [31:0] rd
@@ -63,7 +82,10 @@ module memory (
 endmodule
 
 // ============ DATAPATH ============
-module datapath (
+module datapath #(
+    parameter MEMORY_INIT_FILE = "",
+    parameter integer MEMORY_INIT_WORDS = 0
+) (
     input         clk, rst,
     input         pc_write, ir_write, reg_write, mem_write, addr_src,
     input  [1:0]  pc_src, alu_src_a, alu_src_b, result_src,
@@ -75,7 +97,8 @@ module datapath (
 );
     reg  [31:0] pc, pc_next;
     reg  [31:0] ir, mdr, a, b, alu_out;
-    wire [31:0] mem_rd, rd1, rd2, alu_result, src_a, src_b, imm_ext, result;
+    wire [31:0] mem_rd, imem_rd, dmem_rd;
+    wire [31:0] rd1, rd2, alu_result, src_a, src_b, imm_ext, result;
 
     wire [4:0] rs1  = ir[19:15];
     wire [4:0] rs2  = ir[24:20];
@@ -97,7 +120,12 @@ module datapath (
                      (opcode == 7'b0110111 || opcode == 7'b0010111) ? imm_u : imm_i;
 
     wire [31:0] mem_addr = (addr_src) ? alu_out : pc;
-	memory mem (.clk(clk), .we(mem_write), .addr(mem_addr), .wd(b), .rd(mem_rd));
+	imem #(
+        .INIT_FILE(MEMORY_INIT_FILE),
+        .INIT_WORDS(MEMORY_INIT_WORDS)
+    ) imem_inst (.addr(mem_addr), .rd(imem_rd));
+	dmem dmem_inst (.clk(clk), .we(mem_write & addr_src), .addr(mem_addr), .wd(b), .rd(dmem_rd));
+    assign mem_rd = addr_src ? dmem_rd : imem_rd;
 	
 	register_file rf (.clk(clk), .we(reg_write), .rs1(rs1), .rs2(rs2), .rd(rd_w), .wd(result), .rd1(rd1), .rd2(rd2));
 	
@@ -214,7 +242,10 @@ module control (
 endmodule
 
 // ============ RISC-V TOP ============
-module riscv_top (
+module riscv_top #(
+    parameter MEMORY_INIT_FILE = "",
+    parameter integer MEMORY_INIT_WORDS = 0
+) (
     input clk, rst
 );
     wire pc_write, ir_write, reg_write, mem_write;
@@ -225,7 +256,10 @@ module riscv_top (
     wire funct7_5, zero;
     wire addr_src;
 
-    datapath dp (.clk(clk), .rst(rst), .pc_write(pc_write), .ir_write(ir_write),
+    datapath #(
+        .MEMORY_INIT_FILE(MEMORY_INIT_FILE),
+        .MEMORY_INIT_WORDS(MEMORY_INIT_WORDS)
+    ) dp (.clk(clk), .rst(rst), .pc_write(pc_write), .ir_write(ir_write),
         .reg_write(reg_write), .mem_write(mem_write), .pc_src(pc_src),
         .alu_src_a(alu_src_a), .alu_src_b(alu_src_b), .result_src(result_src),
         .alu_ctrl(alu_ctrl), .opcode(opcode), .funct3(funct3),

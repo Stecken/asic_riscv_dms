@@ -2,11 +2,11 @@
 
 ## Escopo
 
-CPU multiciclo de 32 bits, com banco de 32 registradores e memória unificada de
-256 palavras de 32 bits (1 KiB endereçável sem verificação de faixa). A leitura
-da memória é combinacional e a escrita ocorre na borda de subida. Os dois bits
-menos significativos do endereço são ignorados; acessos desalinhados não geram
-trap e atualmente aliasam a palavra.
+CPU multiciclo de 32 bits, com banco de 32 registradores, IMEM somente de leitura
+e DMEM de leitura/escrita. Cada memória possui 256 palavras de 32 bits (1 KiB
+endereçável sem verificação de faixa). A leitura é combinacional e a escrita da
+DMEM ocorre na borda de subida. Os dois bits menos significativos do endereço
+são ignorados; acessos desalinhados não geram trap e atualmente aliasam a palavra.
 
 O projeto não possui pipeline, cache, forwarding, interrupções, CSRs, unidade M
 nem barramento externo. Não é uma implementação RV32I completa.
@@ -20,7 +20,8 @@ riscv_top
     ├── immediate_gen
     ├── alu
     ├── register_file
-    └── memory
+    ├── imem
+    └── dmem
 ```
 
 `rtl/files.f` é o manifesto determinístico. `legacy/` e qualquer netlist em
@@ -31,7 +32,7 @@ riscv_top
 - `clk`: lógica sequencial na borda de subida.
 - `rst`: reset assíncrono, ativo em nível alto.
 - Reset coloca PC, PC antigo, IR, MDR, operandos, ALUOut e estado da FSM em zero.
-- O banco de registradores e a memória usam inicialização a zero para este
+- O banco de registradores e as memórias usam inicialização a zero para este
   laboratório/fluxo de FPGA; não há interface de reset para esses arrays.
 
 ## Fluxo multiciclo
@@ -50,7 +51,7 @@ Estados da FSM:
 | 3 | EX_I | Executa operação com imediato. |
 | 4 | EX_MEM | Calcula endereço efetivo. |
 | 5 | MEM_RD | Captura leitura no MDR. |
-| 6 | MEM_WR | Escreve palavra na memória. |
+| 6 | MEM_WR | Escreve palavra na DMEM. |
 | 7 | WB_ALU | Escreve ALUOut no banco. |
 | 8 | WB_MEM | Escreve MDR no banco. |
 | 9 | EX_B | Compara BEQ/BNE e atualiza PC quando tomado. |

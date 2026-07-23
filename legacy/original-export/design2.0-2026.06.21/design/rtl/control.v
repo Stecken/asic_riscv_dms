@@ -9,6 +9,7 @@ module control (
     output reg ir_write,
     output reg reg_write,
     output reg mem_write,
+    output reg addr_src,
     output reg [1:0] pc_src,
     output reg [1:0] alu_src_a,
     output reg [1:0] alu_src_b,
@@ -84,6 +85,7 @@ module control (
         ir_write   = 0;
         reg_write  = 0;
         mem_write  = 0;
+        addr_src   = 0;
         pc_src     = 2'b00;
         alu_src_a  = 2'b00;
         alu_src_b  = 2'b00;
@@ -141,10 +143,12 @@ module control (
             end
 
             MEM_RD: begin
+                addr_src   = 1;
                 result_src = 2'b01; // MDR
             end
 
             MEM_WR: begin
+                addr_src  = 1;
                 mem_write = 1;
             end
 

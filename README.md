@@ -18,6 +18,7 @@ instale as ferramentas listadas em [docs/development.md](docs/development.md).
 ```bash
 make setup-check
 make test
+make test-legacy
 make wave
 make synth
 make chipinventor-package
@@ -49,7 +50,8 @@ Graphviz, Make, Git, Python 3 e pip. O `postCreateCommand` executa
 - `validation/chipinventor/`: formulários manuais sem resultados presumidos.
 - `openlane/`: placeholders físicos, sem decisões nem execução de P&R.
 - `docs/`: auditoria, arquitetura, verificação, sinais, síntese, ISA e readiness.
-- `legacy/original-export/`: export original preservado; nunca entra no build.
+- `legacy/original-export/`: linha legacy, fora do build oficial; possui teste
+  separado para as formas monolítica e modular.
 - `build/`, `dist/`, `waves/`: artefatos locais descartáveis e ignorados.
 
 ## Simulação e testes
@@ -60,6 +62,7 @@ make build
 make test-unit
 make test-core TEST=core_basic
 make test
+make test-legacy
 ```
 
 Os testes retornam código diferente de zero por `$fatal` quando uma verificação
@@ -68,6 +71,11 @@ observa a interface condicional `RISCV_DEBUG` e mantém um modelo dos writes do
 banco de registradores; ele não acessa arrays internos do DUT por hierarquia.
 Ele também possui timeout e sempre gera um VCD, inclusive quando executado no
 pacote isolado.
+
+`make test-legacy` não mistura o export antigo ao manifesto oficial: ele compila
+e simula separadamente `hdl.v`, o wrapper legado e `legacy/.../rtl/*.v`,
+verificando registradores, o dado gravado na DMEM e a preservação da instrução
+correspondente na IMEM.
 
 Para alterar um programa, edite o `.S`, execute `make programs` e confira
 `make programs-check`. O assembler incluído cobre somente o subconjunto

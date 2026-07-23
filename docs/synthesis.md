@@ -21,7 +21,7 @@ Saídas:
 
 Na validação de 2026-07-19 com Yosys 0.33, `check` encontrou zero problemas, o
 relatório teve 1.404 células na hierarquia e nenhum warning. Esse número é uma
-referência funcional, não uma meta de área: `memory` transforma os arrays em
+referência funcional, não uma meta de área: `imem` e `dmem` transformam os arrays em
 células genéricas e não executa mapeamento para uma tecnologia ASIC/FPGA.
 
 ## Esquemas

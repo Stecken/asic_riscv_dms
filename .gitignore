@@ -31,6 +31,7 @@ htmlcov/
 venv/
 
 # EDA tool work directories and generated implementation data
+/openlane/runs/
 .Xil/
 *.jou
 *.str

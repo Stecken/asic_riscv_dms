@@ -1,4 +1,7 @@
-module riscv_top (
+module riscv_top #(
+    parameter MEMORY_INIT_FILE = "",
+    parameter integer MEMORY_INIT_WORDS = 0
+) (
     input  clk,
     input  rst
 );
@@ -8,6 +11,7 @@ module riscv_top (
     wire        ir_write;
     wire        reg_write;
     wire        mem_write;
+    wire        addr_src;
     wire [1:0]  pc_src;
     wire [1:0]  alu_src_a;
     wire [1:0]  alu_src_b;
@@ -19,13 +23,17 @@ module riscv_top (
     wire        zero;
 
     // Instancia o Datapath
-    datapath dp (
+    datapath #(
+        .MEMORY_INIT_FILE  (MEMORY_INIT_FILE),
+        .MEMORY_INIT_WORDS (MEMORY_INIT_WORDS)
+    ) dp (
         .clk        (clk),
         .rst        (rst),
         .pc_write   (pc_write),
         .ir_write   (ir_write),
         .reg_write  (reg_write),
         .mem_write  (mem_write),
+        .addr_src   (addr_src),
         .pc_src     (pc_src),
         .alu_src_a  (alu_src_a),
         .alu_src_b  (alu_src_b),
@@ -49,6 +57,7 @@ module riscv_top (
         .ir_write   (ir_write),
         .reg_write  (reg_write),
         .mem_write  (mem_write),
+        .addr_src   (addr_src),
         .pc_src     (pc_src),
         .alu_src_a  (alu_src_a),
         .alu_src_b  (alu_src_b),

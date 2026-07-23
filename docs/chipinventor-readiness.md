@@ -63,8 +63,8 @@ Os seguintes itens dependem da documentação oficial e continuam `PENDENTE_DE_C
 
 - O perfil local é `systemverilog-2012`; tarefas `$fatal`/`$error` e `$value$plusargs` podem variar entre simuladores.
 - O testbench usa `$dumpfile`/`$dumpvars`; a plataforma pode adotar outro fluxo de waveform.
-- `memory.v` usa `$readmemh` com caminho fornecido por parâmetro.
-- `memory.v` e `register_file.v` contêm blocos `initial`; a semântica para síntese precisa ser confirmada no fluxo alvo.
+- `imem.v` usa `$readmemh` com caminho fornecido por parâmetro.
+- `imem.v`, `dmem.v` e `register_file.v` contêm blocos `initial`; a semântica para síntese precisa ser confirmada no fluxo alvo.
 - `RISCV_DEBUG` altera a interface observável durante simulação e é fornecido pela linha de compilação.
 - Há pragmas em comentário específicos do Verilator; normalmente são ignorados por outros simuladores, mas o comportamento deve ser confirmado.
 

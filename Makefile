@@ -7,18 +7,19 @@ TEST ?= core_basic
 MODULE ?= alu
 
 RTL_SOURCES := $(shell sed -e '/^[[:space:]]*\#/d' -e '/^[[:space:]]*$$/d' $(RTL_MANIFEST))
-UNIT_TESTS := alu register_file memory immediate_gen control
+UNIT_TESTS := alu register_file imem dmem immediate_gen control
 PROGRAM_HEX := $(FIRMWARE_DIR)/$(TEST).hex
 PROGRAM_WORDS := $(shell if test -f "$(PROGRAM_HEX)"; then wc -l < "$(PROGRAM_HEX)"; else echo 0; fi)
 CORE_BINARY := build/sim/$(TEST)/$(PORTABLE_TB_TOP).vvp
 CORE_LOG := build/logs/test-core-$(TEST).log
 CORE_TEST_WAVE := build/sim/$(TEST)/test-core.vcd
 WAVE_FILE := $(WAVEFORM_DIR)/$(TEST).vcd
+LEGACY_DIR := legacy/original-export/design2.0-2026.06.21/design
 
 IVERILOG_FLAGS := -g2012 -Wall -Wimplicit
 VERILATOR_FLAGS := --lint-only --top-module $(TOP_MODULE) -Wall
 
-.PHONY: help setup-check lint build test test-unit test-core wave open-wave \
+.PHONY: help setup-check lint build test test-unit test-core test-legacy wave open-wave \
 	programs programs-check synth schematic clean ci dirs chipinventor-portability \
 	chipinventor-package chipinventor-check chipinventor-release \
 	chipinventor-validation-record chipinventor-status openlane-readiness
@@ -55,7 +56,7 @@ programs-check: ## Confirm that every checked-in .hex matches its Assembly sourc
 	done
 	@echo "PASS programs-check"
 
-test-unit: dirs ## Run self-checking ALU, register file, control, memory, and immediate tests.
+test-unit: dirs ## Run self-checking ALU, register file, control, IMEM, DMEM, and immediate tests.
 	@set -euo pipefail; \
 	for test_name in $(UNIT_TESTS); do \
 		binary="build/sim/tb_$${test_name}.vvp"; \
@@ -73,6 +74,18 @@ test-core: programs-check $(CORE_BINARY) ## Run the self-checking integrated CPU
 	@test -s "$(CORE_TEST_WAVE)"
 
 test: test-unit test-core ## Run all unit and integrated simulations.
+
+test-legacy: dirs ## Compile and run the monolithic and modular legacy RTL.
+	@set -euo pipefail; \
+	iverilog $(IVERILOG_FLAGS) -s tb_riscv -o build/sim/tb_legacy_monolithic.vvp \
+		"$(LEGACY_DIR)/hdl.v" "$(LEGACY_DIR)/testbench/tb_riscv.v"; \
+	vvp build/sim/tb_legacy_monolithic.vvp; \
+	iverilog $(IVERILOG_FLAGS) -s tb_riscv -o build/sim/tb_legacy_modular.vvp \
+		"$(LEGACY_DIR)"/rtl/*.v "$(LEGACY_DIR)/testbench/tb_riscv.v"; \
+	vvp build/sim/tb_legacy_modular.vvp; \
+	iverilog $(IVERILOG_FLAGS) -s testbench -o build/sim/tb_legacy_wrapper.vvp \
+		"$(LEGACY_DIR)/hdl.v" "$(LEGACY_DIR)/testbench/testbench.v"; \
+	vvp build/sim/tb_legacy_wrapper.vvp
 
 wave: programs-check $(CORE_BINARY) | dirs ## Run a core test and emit waves/TEST.vcd.
 	@set -o pipefail; vvp "$(CORE_BINARY)" +wave="$(WAVE_FILE)" 2>&1 | tee "$(CORE_LOG)"

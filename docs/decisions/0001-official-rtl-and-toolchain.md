@@ -8,7 +8,8 @@ quebrada, tops vazios, logs e artefatos de uma ferramenta cloud.
 ## Decisão
 
 `rtl/` e `rtl/files.f` são a única fonte oficial; `riscv_top` é o top. O export
-é preservado em `legacy/` e excluído dos comandos normais. Ubuntu 24.04 com
+fica em `legacy/`, excluído dos comandos normais e validado apenas pelo alvo
+separado `test-legacy`. Ubuntu 24.04 com
 Icarus, Verilator, Yosys e Graphviz define a baseline reproduzível.
 
 ## Alternativas consideradas

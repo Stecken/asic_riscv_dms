@@ -16,5 +16,5 @@
 *.txt text eol=lf
 Makefile text eol=lf
 
-# The cloud-tool export is archival evidence; preserve its bytes and omit noisy diffs.
-legacy/original-export/** -diff -merge -text
+# Keep legacy line endings byte-preserved while allowing review of integrations.
+legacy/original-export/** diff merge -text

@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 `default_nettype none
 
-module tb_memory;
+module tb_dmem;
     reg         clk;
     reg         we;
     reg  [31:0] addr;
@@ -9,7 +9,7 @@ module tb_memory;
     wire [31:0] rd;
     integer errors;
 
-    memory dut (.clk(clk), .we(we), .addr(addr), .wd(wd), .rd(rd));
+    dmem dut (.clk(clk), .we(we), .addr(addr), .wd(wd), .rd(rd));
     always #5 clk = ~clk;
 
     task expect_read;
@@ -19,7 +19,7 @@ module tb_memory;
             addr = address;
             #1;
             if (rd !== expected) begin
-                $error("memory[%h]: got %h, expected %h", address, rd, expected);
+                $error("dmem[%h]: got %h, expected %h", address, rd, expected);
                 errors = errors + 1;
             end
         end
@@ -41,12 +41,12 @@ module tb_memory;
         we = 1'b0;
         expect_read(32'd128, 32'hcafef00d);
         expect_read(32'd132, 32'd0);
-        expect_read(32'd130, 32'hcafef00d); // word-addressed: low two bits ignored
+        expect_read(32'd130, 32'hcafef00d); // low two address bits are ignored
 
         if (errors != 0) begin
-            $fatal(1, "tb_memory failed with %0d errors", errors);
+            $fatal(1, "tb_dmem failed with %0d errors", errors);
         end
-        $display("PASS tb_memory");
+        $display("PASS tb_dmem");
         $finish;
     end
 endmodule

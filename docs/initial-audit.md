@@ -4,6 +4,10 @@ Data da inspeção: 2026-07-19. Escopo original:
 `design2.0-2026.06.21/design/`, preservado sem edição em
 `legacy/original-export/design2.0-2026.06.21/design/` após a auditoria.
 
+Atualização de 2026-07-22: por solicitação explícita, a linha legacy passou a
+incorporar IMEM/DMEM separadas tanto em `hdl.v` quanto na árvore modular. O Git
+preserva o snapshot original anterior a essa integração.
+
 ## Resumo executivo
 
 A árvore modular original não compilava: `rtl/memory.v` era uma cópia byte a

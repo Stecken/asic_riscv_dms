@@ -7,22 +7,25 @@
 - Language profile: `systemverilog-2012`
 - Official RTL manifest: `rtl/files.f`
 - Portable testbench tree: `tb/portable/`
-- Files scanned: 13
+- Files scanned: 15
 
 ## Summary
 
 | Error | Warning | Manual validation | Info |
 | ---: | ---: | ---: | ---: |
-| 0 | 2 | 28 | 16 |
+| 0 | 4 | 31 | 17 |
 
 ## Findings
 
 | Class | File | Line | Rule | Observation |
 | --- | --- | ---: | --- | --- |
-| WARNING | `rtl/memory.v` | 10 | `tool-pragma` | Tool-specific pragma may be ignored or rejected elsewhere. |
-| WARNING | `rtl/memory.v` | 12 | `tool-pragma` | Tool-specific pragma may be ignored or rejected elsewhere. |
-| MANUAL | `rtl/memory.v` | 20 | `rtl-initial` | Confirm synthesizable initialization semantics for the selected target flow. |
-| MANUAL | `rtl/memory.v` | 25 | `memory-load` | Confirm relative firmware path and memory initialization support in ChipInventor. |
+| WARNING | `rtl/dmem.v` | 8 | `tool-pragma` | Tool-specific pragma may be ignored or rejected elsewhere. |
+| WARNING | `rtl/dmem.v` | 10 | `tool-pragma` | Tool-specific pragma may be ignored or rejected elsewhere. |
+| WARNING | `rtl/imem.v` | 9 | `tool-pragma` | Tool-specific pragma may be ignored or rejected elsewhere. |
+| WARNING | `rtl/imem.v` | 11 | `tool-pragma` | Tool-specific pragma may be ignored or rejected elsewhere. |
+| MANUAL | `rtl/dmem.v` | 18 | `rtl-initial` | Confirm synthesizable initialization semantics for the selected target flow. |
+| MANUAL | `rtl/imem.v` | 18 | `rtl-initial` | Confirm synthesizable initialization semantics for the selected target flow. |
+| MANUAL | `rtl/imem.v` | 23 | `memory-load` | Confirm relative firmware path and memory initialization support in ChipInventor. |
 | MANUAL | `rtl/register_file.v` | 18 | `rtl-initial` | Confirm synthesizable initialization semantics for the selected target flow. |
 | MANUAL | `tb/portable/tb_core.v` | 93 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/tb_core.v` | 110 | `plusargs` | Confirm simulator plusarg support; the default waveform path remains usable without it. |
@@ -42,10 +45,12 @@
 | MANUAL | `tb/portable/unit/tb_control.v` | 99 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/unit/tb_control.v` | 110 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/unit/tb_control.v` | 115 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
+| MANUAL | `tb/portable/unit/tb_dmem.v` | 22 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
+| MANUAL | `tb/portable/unit/tb_dmem.v` | 47 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
+| MANUAL | `tb/portable/unit/tb_imem.v` | 18 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
+| MANUAL | `tb/portable/unit/tb_imem.v` | 34 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/unit/tb_immediate_gen.v` | 18 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/unit/tb_immediate_gen.v` | 35 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
-| MANUAL | `tb/portable/unit/tb_memory.v` | 22 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
-| MANUAL | `tb/portable/unit/tb_memory.v` | 47 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/unit/tb_register_file.v` | 45 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/unit/tb_register_file.v` | 49 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
 | MANUAL | `tb/portable/unit/tb_register_file.v` | 76 | `self-check` | Confirm nonzero failure propagation for self-checking tasks. |
@@ -53,7 +58,8 @@
 | INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/alu.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
 | INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/control.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
 | INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/datapath.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
-| INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/memory.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
+| INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/dmem.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
+| INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/imem.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
 | INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/register_file.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
 | INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/riscv_top.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |
 | INFO | `legacy/original-export/design2.0-2026.06.21/design/rtl/top.v` | - | `outside-source-list` | Preserved legacy HDL is intentionally excluded from the explicit source list. |

@@ -4,7 +4,7 @@ module control (
     input      [6:0] opcode,
     input      [2:0] funct3,
     input      funct7_5,
-    input      zero,
+    input      branch_taken,
     output reg pc_write,
     output reg ir_write,
     output reg reg_write,
@@ -163,11 +163,8 @@ module control (
             end
 
             EX_B: begin
-                alu_src_a = 2'b01;
-                alu_src_b = 2'b00;
-                alu_ctrl  = 4'b0001; // SUB — compara
                 pc_src    = 2'b01;
-                pc_write  = (funct3 == 3'b000) ? zero : ~zero; // BEQ ou BNE
+                pc_write  = branch_taken;
             end
 
             EX_J: begin

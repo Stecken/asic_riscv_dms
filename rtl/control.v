@@ -7,7 +7,7 @@ module control (
     input  wire [6:0] opcode,
     input  wire [2:0] funct3,
     input  wire       funct7_5,
-    input  wire       zero,
+    input  wire       branch_taken,
     output reg        pc_write,
     output reg        ir_write,
     output reg        reg_write,
@@ -170,15 +170,8 @@ module control (
                 result_src = 2'b01;
             end
             ST_EX_B: begin
-                alu_src_a = 2'b01;
-                alu_src_b = 2'b00;
-                alu_ctrl  = ALU_SUB;
-                pc_src    = 2'b01;
-                case (funct3)
-                    3'b000: pc_write = zero;  // BEQ
-                    3'b001: pc_write = ~zero; // BNE
-                    default: pc_write = 1'b0;
-                endcase
+                pc_src   = 2'b01;
+                pc_write = branch_taken;
             end
             ST_EX_J: begin
                 alu_src_a = 2'b10;

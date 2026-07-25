@@ -25,6 +25,11 @@ quando `RISCV_DEBUG` está definido e aparecem no escopo `tb_core`.
 | `debug_mdr` | Memory Data Register. |
 | `debug_pc_src`, `debug_alu_src_a`, `debug_alu_src_b`, `debug_result_src` | Seletores dos multiplexadores. |
 
+`branch_taken` é um sinal interno entre `datapath` e `control`; ele não é uma
+saída de debug do top. Para investigá-lo, observe `debug_state == 9`
+(`ST_EX_B`) junto com `debug_funct3`, `debug_operand_a`, `debug_operand_b` e a
+mudança seguinte de `debug_pc`.
+
 ## Abrindo no Codespaces
 
 1. Execute `make wave TEST=core_basic`.

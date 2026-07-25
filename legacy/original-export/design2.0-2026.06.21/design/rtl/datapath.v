@@ -19,7 +19,7 @@ module datapath #(
     output [6:0]  opcode,
     output [2:0]  funct3,
     output        funct7_5,
-    output        zero
+    output        branch_taken
 );
 
     // Program Counter
@@ -98,13 +98,20 @@ module datapath #(
         .rd2  (rd2)
     );
 
+    branch_comp branch_comp_inst (
+        .a      (a),
+        .b      (b),
+        .funct3 (funct3),
+        .taken  (branch_taken)
+    );
+
     // ALU
     alu alu_inst (
         .a        (src_a),
         .b        (src_b),
         .alu_ctrl (alu_ctrl),
         .result   (alu_result),
-        .zero     (zero)
+        .zero     ()
     );
 
     // MUX fonte A da ALU

@@ -7,7 +7,7 @@ module tb_control;
     reg [6:0] opcode;
     reg [2:0] funct3;
     reg funct7_5;
-    reg zero;
+    reg branch_taken;
     wire pc_write;
     wire ir_write;
     wire reg_write;
@@ -23,7 +23,7 @@ module tb_control;
 
     control dut (
         .clk(clk), .rst(rst), .opcode(opcode), .funct3(funct3),
-        .funct7_5(funct7_5), .zero(zero), .pc_write(pc_write),
+        .funct7_5(funct7_5), .branch_taken(branch_taken), .pc_write(pc_write),
         .ir_write(ir_write), .reg_write(reg_write), .mem_write(mem_write),
         .addr_src(addr_src), .pc_src(pc_src), .alu_src_a(alu_src_a),
         .alu_src_b(alu_src_b), .result_src(result_src), .alu_ctrl(alu_ctrl),
@@ -69,7 +69,7 @@ module tb_control;
         opcode = 7'b0110011;
         funct3 = 3'b101;
         funct7_5 = 1'b1;
-        zero = 1'b0;
+        branch_taken = 1'b0;
         errors = 0;
 
         reset_control();
@@ -102,12 +102,19 @@ module tb_control;
 
         opcode = 7'b1100011;
         funct3 = 3'b000;
-        zero = 1'b1;
+        branch_taken = 1'b1;
         reset_control();
         tick(); expect_state(4'd1);
         tick(); expect_state(4'd9);
         if (!pc_write || pc_src != 2'b01) begin
-            $error("taken BEQ controls mismatch");
+            $error("taken branch controls mismatch");
+            errors = errors + 1;
+        end
+
+        branch_taken = 1'b0;
+        #1;
+        if (pc_write) begin
+            $error("untaken branch wrote PC");
             errors = errors + 1;
         end
 

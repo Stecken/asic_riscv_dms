@@ -10,6 +10,8 @@ O projeto implementa um subconjunto de RV32I; ele **não** declara conformidade
 RV32I completa. Consulte [docs/isa-status.md](docs/isa-status.md) antes de usar
 uma instrução.
 
+Para entender a arquitetura completa, consulte o [guia visual do fluxo da CPU](docs/README-architecture-flow.md).
+
 ## Início rápido
 
 No Codespaces, o ambiente já é preparado automaticamente. Em um Linux local,
@@ -50,6 +52,7 @@ Graphviz, Make, Git, Python 3 e pip. O `postCreateCommand` executa
 - `validation/chipinventor/`: formulários manuais sem resultados presumidos.
 - `openlane/`: placeholders físicos, sem decisões nem execução de P&R.
 - `docs/`: auditoria, arquitetura, verificação, sinais, síntese, ISA e readiness.
+- `docs/README-architecture-flow.md`: diagramas e fluxo detalhado de todos os módulos.
 - `legacy/original-export/`: linha legacy, fora do build oficial; possui teste
   separado para as formas monolítica e modular.
 - `build/`, `dist/`, `waves/`: artefatos locais descartáveis e ignorados.

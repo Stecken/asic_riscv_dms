@@ -7,7 +7,7 @@ TEST ?= core_basic
 MODULE ?= alu
 
 RTL_SOURCES := $(shell sed -e '/^[[:space:]]*\#/d' -e '/^[[:space:]]*$$/d' $(RTL_MANIFEST))
-UNIT_TESTS := alu register_file imem dmem immediate_gen control
+UNIT_TESTS := alu register_file imem dmem immediate_gen branch_comp control
 PROGRAM_HEX := $(FIRMWARE_DIR)/$(TEST).hex
 PROGRAM_WORDS := $(shell if test -f "$(PROGRAM_HEX)"; then wc -l < "$(PROGRAM_HEX)"; else echo 0; fi)
 CORE_BINARY := build/sim/$(TEST)/$(PORTABLE_TB_TOP).vvp
@@ -56,7 +56,7 @@ programs-check: ## Confirm that every checked-in .hex matches its Assembly sourc
 	done
 	@echo "PASS programs-check"
 
-test-unit: dirs ## Run self-checking ALU, register file, control, IMEM, DMEM, and immediate tests.
+test-unit: dirs ## Run all self-checking unit tests.
 	@set -euo pipefail; \
 	for test_name in $(UNIT_TESTS); do \
 		binary="build/sim/tb_$${test_name}.vvp"; \
@@ -77,6 +77,12 @@ test: test-unit test-core ## Run all unit and integrated simulations.
 
 test-legacy: dirs ## Compile and run the monolithic and modular legacy RTL.
 	@set -euo pipefail; \
+	iverilog $(IVERILOG_FLAGS) -s tb_branch_comp -o build/sim/tb_legacy_branch_monolithic.vvp \
+		"$(LEGACY_DIR)/hdl.v" "$(LEGACY_DIR)/testbench/tb_branch_comp.v"; \
+	vvp build/sim/tb_legacy_branch_monolithic.vvp; \
+	iverilog $(IVERILOG_FLAGS) -s tb_branch_comp -o build/sim/tb_legacy_branch_modular.vvp \
+		"$(LEGACY_DIR)/rtl/branch_comp.v" "$(LEGACY_DIR)/testbench/tb_branch_comp.v"; \
+	vvp build/sim/tb_legacy_branch_modular.vvp; \
 	iverilog $(IVERILOG_FLAGS) -s tb_riscv -o build/sim/tb_legacy_monolithic.vvp \
 		"$(LEGACY_DIR)/hdl.v" "$(LEGACY_DIR)/testbench/tb_riscv.v"; \
 	vvp build/sim/tb_legacy_monolithic.vvp; \

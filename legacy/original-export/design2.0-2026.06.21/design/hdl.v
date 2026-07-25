@@ -23,6 +23,25 @@ module alu (
     end
 endmodule
 
+module branch_comp (
+    input  [31:0] a,
+    input  [31:0] b,
+    input  [2:0] funct3,
+    output reg taken
+);
+    always @(*) begin
+        case (funct3)
+            3'b000: taken = (a == b);
+            3'b001: taken = (a != b);
+            3'b100: taken = ($signed(a) < $signed(b));
+            3'b101: taken = ($signed(a) >= $signed(b));
+            3'b110: taken = (a < b);
+            3'b111: taken = (a >= b);
+            default: taken = 1'b0;
+        endcase
+    end
+endmodule
+
 // ============ REGISTER FILE ============
 module register_file (
     input         clk, we,
@@ -93,7 +112,7 @@ module datapath #(
     output [6:0]  opcode,
     output [2:0]  funct3,
     output        funct7_5,
-    output        zero
+    output        branch_taken
 );
     reg  [31:0] pc, pc_next;
     reg  [31:0] ir, mdr, a, b, alu_out;
@@ -128,8 +147,9 @@ module datapath #(
     assign mem_rd = addr_src ? dmem_rd : imem_rd;
 	
 	register_file rf (.clk(clk), .we(reg_write), .rs1(rs1), .rs2(rs2), .rd(rd_w), .wd(result), .rd1(rd1), .rd2(rd2));
-	
-	alu alu_inst (.a(src_a), .b(src_b), .alu_ctrl(alu_ctrl), .result(alu_result), .zero(zero));
+	branch_comp branch_comp_inst (.a(a), .b(b), .funct3(funct3), .taken(branch_taken));
+
+	alu alu_inst (.a(src_a), .b(src_b), .alu_ctrl(alu_ctrl), .result(alu_result), .zero());
     
     assign src_a  = (alu_src_a == 2'b00) ? pc : a;
     assign src_b  = (alu_src_b == 2'b00) ? b :
@@ -166,7 +186,7 @@ module control (
     input      clk, rst,
     input      [6:0] opcode,
     input      [2:0] funct3,
-    input      funct7_5, zero,
+    input      funct7_5, branch_taken,
     output reg pc_write, ir_write, reg_write, mem_write, addr_src,
     output reg [1:0] pc_src, alu_src_a, alu_src_b, result_src,
     output reg [3:0] alu_ctrl
@@ -232,8 +252,8 @@ module control (
             MEM_WR: begin mem_write=1; addr_src=1; end
             WB_R:   begin reg_write=1; end
             WB_MEM: begin reg_write=1; result_src=2'b01; end
-            EX_B:   begin alu_src_a=2'b01; alu_ctrl=4'b0001; pc_src=2'b01;
-                        pc_write=(funct3==3'b000) ? zero : ~zero;
+            EX_B:   begin pc_src=2'b01;
+                        pc_write=branch_taken;
                     end
             EX_J:   begin alu_src_b=2'b10; end
             WB_J:   begin reg_write=1; result_src=2'b11; pc_write=1; pc_src=2'b01; end
@@ -253,7 +273,7 @@ module riscv_top #(
     wire [3:0] alu_ctrl;
     wire [6:0] opcode;
     wire [2:0] funct3;
-    wire funct7_5, zero;
+    wire funct7_5, branch_taken;
     wire addr_src;
 
     datapath #(
@@ -263,10 +283,11 @@ module riscv_top #(
         .reg_write(reg_write), .mem_write(mem_write), .pc_src(pc_src),
         .alu_src_a(alu_src_a), .alu_src_b(alu_src_b), .result_src(result_src),
         .alu_ctrl(alu_ctrl), .opcode(opcode), .funct3(funct3),
-        .funct7_5(funct7_5), .addr_src(addr_src), .zero(zero));
+        .funct7_5(funct7_5), .branch_taken(branch_taken), .addr_src(addr_src));
 
     control ctrl (.clk(clk), .rst(rst), .opcode(opcode), .funct3(funct3),
-        .funct7_5(funct7_5), .zero(zero), .pc_write(pc_write), .ir_write(ir_write),
+        .funct7_5(funct7_5), .branch_taken(branch_taken),
+        .pc_write(pc_write), .ir_write(ir_write),
         .reg_write(reg_write), .mem_write(mem_write), .pc_src(pc_src),
         .alu_src_a(alu_src_a), .alu_src_b(alu_src_b), .result_src(result_src),
         .alu_ctrl(alu_ctrl), .addr_src(addr_src));

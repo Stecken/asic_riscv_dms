@@ -20,7 +20,7 @@ module riscv_top #(
     wire [6:0]  opcode;
     wire [2:0]  funct3;
     wire        funct7_5;
-    wire        zero;
+    wire        branch_taken;
 
     // Instancia o Datapath
     datapath #(
@@ -42,7 +42,7 @@ module riscv_top #(
         .opcode     (opcode),
         .funct3     (funct3),
         .funct7_5   (funct7_5),
-        .zero       (zero)
+        .branch_taken (branch_taken)
     );
 
     // Instancia o Controle
@@ -52,7 +52,7 @@ module riscv_top #(
         .opcode     (opcode),
         .funct3     (funct3),
         .funct7_5   (funct7_5),
-        .zero       (zero),
+        .branch_taken (branch_taken),
         .pc_write   (pc_write),
         .ir_write   (ir_write),
         .reg_write  (reg_write),

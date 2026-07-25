@@ -17,7 +17,11 @@ status é preservado através dos pipelines com `pipefail`.
 - `tb_imem`: leitura, estado inicial e semântica word-addressed da memória de instruções.
 - `tb_dmem`: estado inicial, escrita síncrona, leitura e semântica word-addressed da memória de dados.
 - `tb_immediate_gen`: formatos I, S, B, U, J e default sem imediato.
-- `tb_control`: SRA, writeback R, caminho LW/`addr_src` e BEQ tomado.
+- `tb_branch_comp`: BEQ, BNE, BLT, BGE, BLTU, BGEU e diferenças signed/unsigned.
+- `tb_control`: SRA, writeback R, caminho LW/`addr_src` e branch tomado/não tomado.
+
+São sete testbenches unitários. A execução atual no devcontainer passou em todos
+eles.
 
 O teste integrado executa SW/LW na DMEM enquanto o fetch continua vindo da
 IMEM. `make test-legacy` repete uma verificação de isolamento nas duas formas do
@@ -34,9 +38,12 @@ export antigo.
 5. verifica registradores, store em endereço 128 e timeout;
 6. grava `build/logs/test-core-core_basic.log`.
 
-O programa cobre operações R, ADDI, negativos, LW/SW, BEQ tomado, BNE não
-tomado, LUI e JAL com link/alvo corretos. Os demais programas Assembly são
-vetores preparados, ainda não têm testbenches integrados independentes.
+O programa cobre operações R, ADDI, negativos, LW/SW, os seis branches, LUI e
+JAL com link/alvo corretos. Os demais programas Assembly são vetores preparados,
+ainda não têm testbenches integrados independentes.
+
+Na validação atual, `core_basic` terminou em 152 ciclos e o testbench confirmou
+todos os registradores esperados e o store de `8` para o endereço `128`.
 
 ## Programas
 

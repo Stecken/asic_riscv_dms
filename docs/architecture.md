@@ -1,5 +1,8 @@
 # Arquitetura
 
+O guia completo, com diagramas de módulos, sinais e sequências de execução, está
+em [README-architecture-flow.md](README-architecture-flow.md).
+
 ## Escopo
 
 CPU multiciclo de 32 bits, com banco de 32 registradores, IMEM somente de leitura
@@ -18,6 +21,7 @@ riscv_top
 ├── control
 └── datapath
     ├── immediate_gen
+    ├── branch_comp
     ├── alu
     ├── register_file
     ├── imem
@@ -54,7 +58,7 @@ Estados da FSM:
 | 6 | MEM_WR | Escreve palavra na DMEM. |
 | 7 | WB_ALU | Escreve ALUOut no banco. |
 | 8 | WB_MEM | Escreve MDR no banco. |
-| 9 | EX_B | Compara BEQ/BNE e atualiza PC quando tomado. |
+| 9 | EX_B | Usa `branch_comp` e atualiza PC quando o branch é tomado. |
 | 10 | EX_J | Recalcula/preserva alvo JAL. |
 | 11 | WB_J | Escreve link e instala o alvo. |
 
@@ -65,5 +69,8 @@ operandos, sinais da ALU, writeback e barramento de memória. Esses taps não
 alteram a lógica funcional. Simulação integrada, waveform e síntese de
 laboratório usam essa definição; o build simples preserva a interface original
 `clk`/`rst`.
+
+`branch_taken` é a decisão funcional do comparador de branches. A flag `zero`
+da ALU permanece disponível para debug, mas não é usada pelo controle do PC.
 
 Mudanças arquiteturais futuras exigem ADR em `docs/decisions/`.

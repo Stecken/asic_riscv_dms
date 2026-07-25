@@ -35,6 +35,15 @@ I_TYPE = {
     "andi": 0b111,
 }
 
+BRANCH_TYPE = {
+    "beq": 0b000,
+    "bne": 0b001,
+    "blt": 0b100,
+    "bge": 0b101,
+    "bltu": 0b110,
+    "bgeu": 0b111,
+}
+
 
 class AssemblyError(ValueError):
     pass
@@ -159,12 +168,12 @@ def encode(tokens: list[str], labels: dict[str, int], pc: int) -> int:
         rs1 = register(args[2])
         return ((imm >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (0b010 << 12) | ((imm & 0x1F) << 7) | 0x23
 
-    if mnemonic in {"beq", "bne"}:
+    if mnemonic in BRANCH_TYPE:
         if len(args) != 3:
             raise AssemblyError(f"{mnemonic} expects rs1, rs2, target")
         rs1, rs2 = register(args[0]), register(args[1])
         imm = signed_field(branch_offset(args[2], labels, pc), 13, "branch offset")
-        funct3 = 0b000 if mnemonic == "beq" else 0b001
+        funct3 = BRANCH_TYPE[mnemonic]
         return (((imm >> 12) & 1) << 31) | (((imm >> 5) & 0x3F) << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (((imm >> 1) & 0xF) << 8) | (((imm >> 11) & 1) << 7) | 0x63
 
     if mnemonic in {"lui", "auipc"}:

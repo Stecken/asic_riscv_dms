@@ -23,11 +23,12 @@ inclui ALU/controle/imediato; “core” significa `core_basic` self-checking.
 | AUIPC | sim | sim | imediato | não | parcial até teste integrado |
 | LW | sim | palavra | memória/controle | sim | implementada para palavra alinhada |
 | SW | sim | palavra | memória | sim | implementada para palavra alinhada |
-| BEQ | sim | sim | controle/imediato | tomado | implementada |
-| BNE | sim | sim | imediato | não tomado | implementada, cobertura de tomado pendente |
+| BEQ | sim | sim | comparador/imediato | tomado | implementada |
+| BNE | sim | sim | comparador/imediato | não tomado | implementada |
+| BLT, BGE | sim | signed | comparador | sim | implementadas |
+| BLTU, BGEU | sim | unsigned | comparador | sim | implementadas |
 | JAL | sim | sim | imediato | sim | implementada |
 | JALR | não | não | não | não | não implementada |
-| BLT, BGE, BLTU, BGEU | não | não | não | não | não implementada |
 | LB, LBU, LH, LHU | não | não | não | não | não implementada |
 | SB, SH | não | não | não | não | não implementada |
 | FENCE, ECALL, EBREAK | não | não | não | não | não implementada |
@@ -38,8 +39,7 @@ inclui ALU/controle/imediato; “core” significa `core_basic` self-checking.
 
 - ADD/SUB e SLT/SLTU têm decodes distintos e casos negativos testados.
 - SRL/SRA usam `funct7[5]` para distinguir shift lógico e aritmético.
-- Somente BEQ/BNE podem escrever o PC no estado de branch; outros `funct3` não
-  são tratados como BNE por default.
+- `branch_comp` decide os seis branches; `funct3` inválido nunca toma o salto.
 - JAL usa `old_pc + immediate` como alvo e grava `old_pc + 4` como link.
 - LUI zera a entrada A da ALU; AUIPC usa `old_pc`.
 - PC é alinhado por construção dos imediatos B/J, mas não há trap de instrução

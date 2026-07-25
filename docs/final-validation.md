@@ -1,25 +1,52 @@
-# Validação da baseline
+# Validação da baseline e atualização do fluxo
 
-Data: 2026-07-19 (America/Sao_Paulo).
+Última atualização: 2026-07-24 (America/Sao_Paulo).
+
+## Validação atual
+
+Esta seção registra a execução mais recente depois da integração de `branch_comp`,
+dos seis branches e do firmware `core_basic` expandido. O Dockerfile do
+devcontainer foi construído e os comandos foram executados dentro do container.
+
+| Comando | Resultado atual |
+| --- | --- |
+| `make programs-check` | PASS |
+| `make test` | PASS: 7 testes unitários + teste integrado |
+| `make test-core TEST=core_basic` | PASS em 152 ciclos |
+| `make schematic MODULE=riscv_top` | PASS; SVG e DOT gerados |
+
+O teste integrado confirmou os registradores esperados e o `SW` de `8` para o
+endereço `128`. Também foi produzido o waveform em
+`build/sim/core_basic/test-core.vcd` e o diagrama em
+`build/schematic/riscv_top.svg`.
+
+O host Linux não tinha `iverilog`, `vvp`, Yosys ou Graphviz disponíveis
+diretamente. A execução atual usou o `.devcontainer/Dockerfile`, que instala
+essas ferramentas no container.
+
+Os comandos de lint, síntese completa, pacote ChipInventor e `make ci` abaixo
+continuam sendo a baseline histórica de 2026-07-19; devem ser reexecutados
+quando esta alteração for promovida como uma nova baseline.
 
 ## Ambiente
 
 O Dockerfile do devcontainer foi construído com sucesso. O script de
 `postCreateCommand` foi executado como usuário não privilegiado e terminou com
-`Codespace ready`, após `setup-check`, build e cinco testes unitários.
+`Codespace ready`, após `setup-check`, build e os testes unitários então
+existentes.
 
 Ferramentas observadas: Icarus/VVP 12.0, Verilator 5.020, Yosys 0.33, Graphviz
 2.43.0, Python 3.12.3 e Make 4.3.
 
-## Comandos e resultados
+## Comandos e resultados — baseline de 2026-07-19
 
 | Comando | Resultado |
 | --- | --- |
 | `make setup-check` | PASS; 7 fontes oficiais, sem módulos duplicados, top presente. |
 | `make lint` | PASS; logs de Icarus e Verilator sem warnings. |
 | `make build` | PASS; `build/rtl/riscv_top.vvp`. |
-| `make test-unit` | PASS nos cinco testbenches self-checking. |
-| `make test-core TEST=core_basic` | PASS em 86 ciclos. |
+| `make test-unit` | HISTÓRICO: PASS nos cinco testbenches self-checking então existentes. |
+| `make test-core TEST=core_basic` | HISTÓRICO: PASS em 86 ciclos, antes do firmware expandido. |
 | `make ci` | PASS completo no devcontainer. |
 | `make wave TEST=core_basic` | PASS; VCD válido de aproximadamente 60 KiB. |
 | `make synth` | PASS; `check` com zero problemas e zero warnings. |
@@ -72,8 +99,8 @@ atual também ignora `dist/` e mantém somente o inventário estático
 
 1. Criar o primeiro commit e abrir um Codespace no GitHub para validar a UI do
    Surfer e a primeira execução do Actions.
-2. Adicionar testes integrados self-checking para AUIPC, shifts imediatos, BNE
-   tomado e operações I lógicas/comparação.
+2. Adicionar testes integrados self-checking para AUIPC, shifts imediatos e
+   operações I lógicas/comparação.
 3. Definir comportamento de instrução ilegal, alinhamento e acessos fora da
    memória antes de ampliar a ISA.
 4. Adotar uma toolchain RISC-V fixada e testes oficiais somente quando houver

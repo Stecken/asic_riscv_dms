@@ -25,6 +25,45 @@ not_equal:
     addi  x19, x0, 99
 after_jump:
     addi  x20, x0, 77
+
+    addi  x21, x0, 5
+    addi  x22, x0, 10
+    addi  x23, x0, -1
+    addi  x24, x0, 1
+
+    addi  x25, x0, 1
+    blt   x21, x22, blt_taken_done
+    addi  x25, x0, 99
+blt_taken_done:
+
+    addi  x26, x0, 1
+    blt   x22, x21, blt_false_fail
+    jal   x0, blt_false_done
+blt_false_fail:
+    addi  x26, x0, 99
+blt_false_done:
+
+    addi  x27, x0, 1
+    bge   x22, x21, bge_done
+    addi  x27, x0, 99
+bge_done:
+
+    addi  x28, x0, 1
+    bltu  x23, x24, bltu_fail
+    jal   x0, bltu_done
+bltu_fail:
+    addi  x28, x0, 99
+bltu_done:
+
+    addi  x29, x0, 1
+    blt   x23, x24, blt_signed_done
+    addi  x29, x0, 99
+blt_signed_done:
+
+    addi  x30, x0, 1
+    bgeu  x23, x24, bgeu_done
+    addi  x30, x0, 99
+bgeu_done:
     addi  x31, x0, 1
 done:
     jal   x0, done

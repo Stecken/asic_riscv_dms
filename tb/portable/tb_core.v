@@ -148,6 +148,16 @@ module tb_core;
         check_register(5'd18, 32'd84);
         check_register(5'd19, 32'd0);
         check_register(5'd20, 32'd77);
+        check_register(5'd21, 32'd5);
+        check_register(5'd22, 32'd10);
+        check_register(5'd23, 32'hffffffff);
+        check_register(5'd24, 32'd1);
+        check_register(5'd25, 32'd1);
+        check_register(5'd26, 32'd1);
+        check_register(5'd27, 32'd1);
+        check_register(5'd28, 32'd1);
+        check_register(5'd29, 32'd1);
+        check_register(5'd30, 32'd1);
         check_register(5'd31, 32'd1);
         if (!saw_expected_store) begin
             $error("expected SW of 8 to address 128 was not observed");

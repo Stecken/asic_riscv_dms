@@ -54,7 +54,7 @@ module riscv_top #(
     wire [6:0] opcode;
     wire [2:0] funct3;
     wire       funct7_5;
-    wire       zero;
+    wire       branch_taken;
 
     datapath #(
         .MEMORY_INIT_FILE  (MEMORY_INIT_FILE),
@@ -75,7 +75,7 @@ module riscv_top #(
         .opcode     (opcode),
         .funct3     (funct3),
         .funct7_5   (funct7_5),
-        .zero       (zero)
+        .branch_taken (branch_taken)
 `ifdef RISCV_DEBUG
         , .debug_pc             (debug_pc)
         , .debug_old_pc         (debug_old_pc)
@@ -89,6 +89,7 @@ module riscv_top #(
         , .debug_alu_a          (debug_alu_a)
         , .debug_alu_b          (debug_alu_b)
         , .debug_alu_result     (debug_alu_result)
+        , .debug_zero           (debug_zero)
         , .debug_alu_out        (debug_alu_out)
         , .debug_mdr            (debug_mdr)
         , .debug_writeback      (debug_writeback)
@@ -104,7 +105,7 @@ module riscv_top #(
         .opcode     (opcode),
         .funct3     (funct3),
         .funct7_5   (funct7_5),
-        .zero       (zero),
+        .branch_taken (branch_taken),
         .pc_write   (pc_write),
         .ir_write   (ir_write),
         .reg_write  (reg_write),
@@ -125,7 +126,6 @@ module riscv_top #(
     assign debug_funct3     = funct3;
     assign debug_funct7_5   = funct7_5;
     assign debug_alu_control = alu_ctrl;
-    assign debug_zero       = zero;
     assign debug_reg_write  = reg_write;
     assign debug_mem_write  = mem_write;
     assign debug_pc_src     = pc_src;

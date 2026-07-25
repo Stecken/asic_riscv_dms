@@ -20,7 +20,7 @@ module datapath #(
     output wire [6:0] opcode,
     output wire [2:0] funct3,
     output wire       funct7_5,
-    output wire       zero
+    output wire       branch_taken
 `ifdef RISCV_DEBUG
     , output wire [31:0] debug_pc
     , output wire [31:0] debug_old_pc
@@ -34,6 +34,7 @@ module datapath #(
     , output wire [31:0] debug_alu_a
     , output wire [31:0] debug_alu_b
     , output wire [31:0] debug_alu_result
+    , output wire        debug_zero
     , output wire [31:0] debug_alu_out
     , output wire [31:0] debug_mdr
     , output wire [31:0] debug_writeback
@@ -57,6 +58,9 @@ module datapath #(
     wire [31:0] register_read_a;
     wire [31:0] register_read_b;
     wire [31:0] alu_result;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire        alu_zero;
+    /* verilator lint_on UNUSEDSIGNAL */
     wire [31:0] alu_a;
     wire [31:0] alu_b;
     wire [31:0] immediate;
@@ -114,6 +118,13 @@ module datapath #(
         .rd2 (register_read_b)
     );
 
+    branch_comp branch_comp_inst (
+        .a      (operand_a),
+        .b      (operand_b),
+        .funct3 (funct3),
+        .taken  (branch_taken)
+    );
+
     assign alu_a = (alu_src_a == 2'b00) ? pc :
                    (alu_src_a == 2'b01) ? operand_a :
                    (alu_src_a == 2'b10) ? old_pc : 32'b0;
@@ -127,7 +138,7 @@ module datapath #(
         .b        (alu_b),
         .alu_ctrl (alu_ctrl),
         .result   (alu_result),
-        .zero     (zero)
+        .zero     (alu_zero)
     );
 
     assign writeback_data = (result_src == 2'b00) ? alu_out :
@@ -175,6 +186,7 @@ module datapath #(
     assign debug_alu_a          = alu_a;
     assign debug_alu_b          = alu_b;
     assign debug_alu_result     = alu_result;
+    assign debug_zero           = alu_zero;
     assign debug_alu_out        = alu_out;
     assign debug_mdr            = mdr;
     assign debug_writeback      = writeback_data;

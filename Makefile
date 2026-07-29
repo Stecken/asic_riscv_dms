@@ -7,7 +7,7 @@ TEST ?= core_basic
 MODULE ?= alu
 
 RTL_SOURCES := $(shell sed -e '/^[[:space:]]*\#/d' -e '/^[[:space:]]*$$/d' $(RTL_MANIFEST))
-UNIT_TESTS := alu register_file imem dmem immediate_gen branch_comp control
+UNIT_TESTS := alu register_file imem dmem immediate_gen branch_comp control lui auipc jalr
 PROGRAM_HEX := $(FIRMWARE_DIR)/$(TEST).hex
 PROGRAM_WORDS := $(shell if test -f "$(PROGRAM_HEX)"; then wc -l < "$(PROGRAM_HEX)"; else echo 0; fi)
 CORE_BINARY := build/sim/$(TEST)/$(PORTABLE_TB_TOP).vvp

@@ -147,7 +147,7 @@ module datapath #(
 
     assign pc_next = (pc_src == 2'b00) ? alu_result :
                      (pc_src == 2'b01) ? alu_out :
-                     (pc_src == 2'b10) ? {alu_result[31:1], 1'b0} : (pc + 32'd4);
+                     (pc_src == 2'b10) ? {alu_out[31:1], 1'b0} : (pc + 32'd4);
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin

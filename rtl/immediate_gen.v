@@ -15,6 +15,7 @@ module immediate_gen (
     localparam [6:0] OP_BRANCH = 7'b1100011;
     localparam [6:0] OP_JAL    = 7'b1101111;
     localparam [6:0] OP_LUI    = 7'b0110111;
+    localparam [6:0] OP_JALR   = 7'b1100111;
 
     always @(*) begin
         case (opcode)
@@ -35,7 +36,7 @@ module immediate_gen (
             OP_LUI, OP_AUIPC: begin
                 immediate = {instruction[31:12], 12'b0};
             end
-            OP_LOAD, OP_IMM: begin
+            OP_LOAD, OP_IMM, OP_JALR: begin
                 immediate = {{20{instruction[31]}}, instruction[31:20]};
             end
             default: begin

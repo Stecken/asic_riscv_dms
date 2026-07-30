@@ -44,6 +44,7 @@ module control (
     localparam [6:0] OP_JAL    = 7'b1101111;
     localparam [6:0] OP_LUI    = 7'b0110111;
     localparam [6:0] OP_AUIPC  = 7'b0010111;
+    localparam [6:0] OP_JALR   = 7'b1100111;
 
     localparam [3:0] ALU_ADD  = 4'b0000;
     localparam [3:0] ALU_SUB  = 4'b0001;
@@ -81,7 +82,8 @@ module control (
                     OP_LOAD,
                     OP_STORE:  next_state = ST_EX_MEM;
                     OP_BRANCH: next_state = ST_EX_B;
-                    OP_JAL:    next_state = ST_EX_J;
+                    OP_JAL,
+                    OP_JALR:    next_state = ST_EX_J;
                     OP_LUI,
                     OP_AUIPC:  next_state = ST_WB_ALU;
                     default:   next_state = ST_IF;
@@ -174,7 +176,7 @@ module control (
                 pc_write = branch_taken;
             end
             ST_EX_J: begin
-                alu_src_a = 2'b10;
+                alu_src_a = (opcode == OP_JALR) ? 2'b01 : 2'b10;
                 alu_src_b = 2'b10;
                 alu_ctrl  = ALU_ADD;
             end
@@ -182,7 +184,7 @@ module control (
                 reg_write  = 1'b1;
                 result_src = 2'b10; // instruction PC + 4
                 pc_write   = 1'b1;
-                pc_src     = 2'b01; // target saved in ALUOut
+                pc_src     = (opcode == OP_JALR) ? 2'b10 : 2'b01; // target saved in ALUOut
             end
             default: begin
             end

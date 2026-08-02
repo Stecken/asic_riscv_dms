@@ -98,11 +98,12 @@ module datapath #(
     );
 
     dmem dmem_inst (
-        .clk  (clk),
-        .we   (mem_write & dmem_sel),
-        .addr (mem_address),
-        .wd   (operand_b),
-        .rd   (dmem_rd)
+        .clk    (clk),
+        .we     (mem_write & dmem_sel),
+        .funct3 (funct3),
+        .addr   (mem_address),
+        .wd     (operand_b),
+        .rd     (dmem_rd)
     );
 
     assign mem_read_data = dmem_sel ? dmem_rd : imem_rd;

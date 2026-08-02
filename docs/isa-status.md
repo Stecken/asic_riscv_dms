@@ -21,16 +21,18 @@ inclui ALU/controle/imediato; “core” significa `core_basic` self-checking.
 | SLTI, SLTIU | sim | sim | ALU/imediato | não | implementada, cobertura core pendente |
 | LUI | sim | sim | imediato | sim | implementada |
 | AUIPC | sim | sim | imediato | não | parcial até teste integrado |
-| LW | sim | palavra | memória/controle | sim | implementada para palavra alinhada |
-| SW | sim | palavra | memória | sim | implementada para palavra alinhada |
+| LW | sim | palavra | memória/controle | sim | implementada |
+| LH, LHU | sim | meia-palavra | memória | sim | implementada |
+| LB, LBU | sim | byte | memória | sim | implementada |
+| SW | sim | palavra | memória | sim | implementada |
+| SH | sim | meia-palavra | memória | sim | implementada |
+| SB | sim | byte | memória | sim | implementada |
 | BEQ | sim | sim | comparador/imediato | tomado | implementada |
 | BNE | sim | sim | comparador/imediato | não tomado | implementada |
 | BLT, BGE | sim | signed | comparador | sim | implementadas |
 | BLTU, BGEU | sim | unsigned | comparador | sim | implementadas |
 | JAL | sim | sim | imediato | sim | implementada |
 | JALR | não | não | não | não | não implementada |
-| LB, LBU, LH, LHU | não | não | não | não | não implementada |
-| SB, SH | não | não | não | não | não implementada |
 | FENCE, ECALL, EBREAK | não | não | não | não | não implementada |
 | CSR/Zicsr | não | não | não | não | não implementada |
 | MUL/DIV (extensão M) | não | não | não | não | não implementada |
@@ -45,5 +47,8 @@ inclui ALU/controle/imediato; “core” significa `core_basic` self-checking.
 - PC é alinhado por construção dos imediatos B/J, mas não há trap de instrução
   desalinhada.
 - x0 retorna zero e escrita em x0 é descartada.
-- Loads/stores aceitam somente semântica de palavra; não há trap de desalinhamento
-  nem verificação de faixa. Endereços fora dos 1 KiB aliasam pelos bits `[9:2]`.
+- LB/LBU/LH/LHU fazem extensão de sinal ou zero conforme funct3; a extração de
+  byte/halfword usa addr[1:0] para selecionar a faixa correta dentro da palavra.
+- SB/SH escrevem somente os bytes alvo sem alterar o restante da palavra.
+- Não há trap de desalinhamento nem verificação de faixa; endereços fora dos 1 KiB
+  aliasam pelos bits `[9:2]`.

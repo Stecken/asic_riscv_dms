@@ -9,7 +9,7 @@ PORTABLE_UNIT_DIR := tb/portable/unit
 
 FIRMWARE_DIR := tb/support/firmware
 DEFAULT_FIRMWARE := core_basic.hex
-PACKAGE_FIRMWARE_FILES := core_basic.hex
+PACKAGE_FIRMWARE_FILES := core_basic.hex core_adversarial.hex core_stress.hex
 
 WAVEFORM_DIR := waves
 CHIPINVENTOR_DIST_DIR := dist/chipinventor

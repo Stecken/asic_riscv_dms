@@ -152,21 +152,31 @@ def encode(tokens: list[str], labels: dict[str, int], pc: int) -> int:
         funct7 = 0b0100000 if mnemonic == "srai" else 0
         return (funct7 << 25) | (shamt << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | 0x13
 
-    if mnemonic == "lw":
+    load_types = {
+        "lb": 0b000,
+        "lh": 0b001,
+        "lw": 0b010,
+        "lbu": 0b100,
+        "lhu": 0b101,
+    }
+    if mnemonic in load_types:
         if len(args) != 3:
-            raise AssemblyError("lw expects rd, offset(rs1)")
+            raise AssemblyError(f"{mnemonic} expects rd, offset(rs1)")
         rd = register(args[0])
         imm = signed_field(immediate(args[1]), 12, "load offset")
         rs1 = register(args[2])
-        return (imm << 20) | (rs1 << 15) | (0b010 << 12) | (rd << 7) | 0x03
+        funct3 = load_types[mnemonic]
+        return (imm << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | 0x03
 
-    if mnemonic == "sw":
+    store_types = {"sb": 0b000, "sh": 0b001, "sw": 0b010}
+    if mnemonic in store_types:
         if len(args) != 3:
-            raise AssemblyError("sw expects rs2, offset(rs1)")
+            raise AssemblyError(f"{mnemonic} expects rs2, offset(rs1)")
         rs2 = register(args[0])
         imm = signed_field(immediate(args[1]), 12, "store offset")
         rs1 = register(args[2])
-        return ((imm >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (0b010 << 12) | ((imm & 0x1F) << 7) | 0x23
+        funct3 = store_types[mnemonic]
+        return ((imm >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | ((imm & 0x1F) << 7) | 0x23
 
     if mnemonic in BRANCH_TYPE:
         if len(args) != 3:

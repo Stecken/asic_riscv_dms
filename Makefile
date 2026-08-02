@@ -7,19 +7,29 @@ TEST ?= core_basic
 MODULE ?= alu
 
 RTL_SOURCES := $(shell sed -e '/^[[:space:]]*\#/d' -e '/^[[:space:]]*$$/d' $(RTL_MANIFEST))
-UNIT_TESTS := alu register_file imem dmem immediate_gen branch_comp control lui auipc jalr
+UNIT_TESTS := alu alu_edges register_file imem dmem dmem_edges immediate_gen branch_comp control control_stress lui auipc jalr
 PROGRAM_HEX := $(FIRMWARE_DIR)/$(TEST).hex
 PROGRAM_WORDS := $(shell if test -f "$(PROGRAM_HEX)"; then wc -l < "$(PROGRAM_HEX)"; else echo 0; fi)
 CORE_BINARY := build/sim/$(TEST)/$(PORTABLE_TB_TOP).vvp
 CORE_LOG := build/logs/test-core-$(TEST).log
 CORE_TEST_WAVE := build/sim/$(TEST)/test-core.vcd
+ADVERSARIAL_HEX := $(FIRMWARE_DIR)/core_adversarial.hex
+ADVERSARIAL_WORDS := $(shell if test -f "$(ADVERSARIAL_HEX)"; then wc -l < "$(ADVERSARIAL_HEX)"; else echo 0; fi)
+ADVERSARIAL_BINARY := build/sim/core_adversarial/tb_core_adversarial.vvp
+ADVERSARIAL_LOG := build/logs/test-core-core_adversarial.log
+ADVERSARIAL_WAVE := build/sim/core_adversarial/test-core.vcd
+STRESS_HEX := $(FIRMWARE_DIR)/core_stress.hex
+STRESS_WORDS := $(shell if test -f "$(STRESS_HEX)"; then wc -l < "$(STRESS_HEX)"; else echo 0; fi)
+STRESS_BINARY := build/sim/core_stress/tb_core_stress.vvp
+STRESS_LOG := build/logs/test-core-core_stress.log
+STRESS_WAVE := build/sim/core_stress/test-core.vcd
 WAVE_FILE := $(WAVEFORM_DIR)/$(TEST).vcd
 LEGACY_DIR := legacy/original-export/design2.0-2026.06.21/design
 
 IVERILOG_FLAGS := -g2012 -Wall -Wimplicit
 VERILATOR_FLAGS := --lint-only --top-module $(TOP_MODULE) -Wall
 
-.PHONY: help setup-check lint build test test-unit test-core test-legacy wave open-wave \
+.PHONY: help setup-check lint build test test-unit test-core test-adversarial test-stress test-legacy wave open-wave \
 	programs programs-check synth schematic clean ci dirs chipinventor-portability \
 	chipinventor-package chipinventor-check chipinventor-release \
 	chipinventor-validation-record chipinventor-status openlane-readiness
@@ -69,11 +79,27 @@ $(CORE_BINARY): $(RTL_SOURCES) $(PORTABLE_TB_SOURCE) $(PROGRAM_HEX) | dirs
 	@mkdir -p "$(dir $(CORE_BINARY))"
 	@iverilog $(IVERILOG_FLAGS) -DRISCV_DEBUG -DPROGRAM_HEX=\"$(PROGRAM_HEX)\" -DPROGRAM_WORDS=$(PROGRAM_WORDS) -s $(PORTABLE_TB_TOP) -o "$@" $(RTL_SOURCES) $(PORTABLE_TB_SOURCE)
 
+$(ADVERSARIAL_BINARY): $(RTL_SOURCES) tb/portable/tb_core_adversarial.v $(ADVERSARIAL_HEX) | dirs
+	@mkdir -p "$(dir $(ADVERSARIAL_BINARY))"
+	@iverilog $(IVERILOG_FLAGS) -DRISCV_DEBUG -DPROGRAM_HEX=\"$(ADVERSARIAL_HEX)\" -DPROGRAM_WORDS=$(ADVERSARIAL_WORDS) -s tb_core_adversarial -o "$@" $(RTL_SOURCES) tb/portable/tb_core_adversarial.v
+
+$(STRESS_BINARY): $(RTL_SOURCES) tb/portable/tb_core_stress.v $(STRESS_HEX) | dirs
+	@mkdir -p "$(dir $(STRESS_BINARY))"
+	@iverilog $(IVERILOG_FLAGS) -DRISCV_DEBUG -DPROGRAM_HEX=\"$(STRESS_HEX)\" -DPROGRAM_WORDS=$(STRESS_WORDS) -s tb_core_stress -o "$@" $(RTL_SOURCES) tb/portable/tb_core_stress.v
+
 test-core: programs-check $(CORE_BINARY) ## Run the self-checking integrated CPU test.
 	@set -o pipefail; vvp "$(CORE_BINARY)" +wave="$(CORE_TEST_WAVE)" 2>&1 | tee "$(CORE_LOG)"
 	@test -s "$(CORE_TEST_WAVE)"
 
-test: test-unit test-core ## Run all unit and integrated simulations.
+test-adversarial: programs-check $(ADVERSARIAL_BINARY) ## Run the adversarial integrated CPU test.
+	@set -o pipefail; vvp "$(ADVERSARIAL_BINARY)" +wave="$(ADVERSARIAL_WAVE)" 2>&1 | tee "$(ADVERSARIAL_LOG)"
+	@test -s "$(ADVERSARIAL_WAVE)"
+
+test-stress: programs-check $(STRESS_BINARY) ## Run the long integrated FSM stress test.
+	@set -o pipefail; vvp "$(STRESS_BINARY)" +wave="$(STRESS_WAVE)" 2>&1 | tee "$(STRESS_LOG)"
+	@test -s "$(STRESS_WAVE)"
+
+test: test-unit test-core test-adversarial test-stress ## Run all unit and integrated simulations.
 
 test-legacy: dirs ## Compile and run the monolithic and modular legacy RTL.
 	@set -euo pipefail; \

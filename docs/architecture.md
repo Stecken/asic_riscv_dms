@@ -43,7 +43,7 @@ riscv_top
 
 O fetch lê a instrução no PC atual, salva esse endereço em `old_pc` e incrementa
 o PC em 4. `old_pc` é a base de branch/JAL/AUIPC e do link `PC+4`, evitando a
-ambiguidade que existia no export original.
+ambiguidade que existia no export original. Para `JALR`, o endereço de destino é calculado a partir de `rs1 + immediate`.
 
 Estados da FSM:
 
@@ -59,8 +59,8 @@ Estados da FSM:
 | 7 | WB_ALU | Escreve ALUOut no banco. |
 | 8 | WB_MEM | Escreve MDR no banco. |
 | 9 | EX_B | Usa `branch_comp` e atualiza PC quando o branch é tomado. |
-| 10 | EX_J | Recalcula/preserva alvo JAL. |
-| 11 | WB_J | Escreve link e instala o alvo. |
+| 10 | EX_J | Calcula o endereço de destino de JAL ou JALR. |
+| 11 | WB_J | Escreve `old_pc + 4` em `rd` e atualiza o PC para o alvo calculado. |
 
 ## Interface de observação
 

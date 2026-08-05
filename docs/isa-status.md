@@ -19,8 +19,8 @@ inclui ALU/controle/imediato; “core” significa `core_basic` self-checking.
 | ANDI, ORI, XORI | sim | sim | ALU/imediato | não | implementada, cobertura core pendente |
 | SLLI, SRLI, SRAI | sim | sim | ALU; decode SRA | não | implementada, cobertura core pendente |
 | SLTI, SLTIU | sim | sim | ALU/imediato | não | implementada, cobertura core pendente |
-| LUI | sim | sim | imediato | sim | implementada |
-| AUIPC | sim | sim | imediato | não | parcial até teste integrado |
+| LUI | sim | sim | sim | sim | implementada |
+| AUIPC | sim | sim | sim | não | implementada |
 | LW | sim | palavra | memória/controle | sim | implementada |
 | LH, LHU | sim | meia-palavra | memória | sim | implementada |
 | LB, LBU | sim | byte | memória | sim | implementada |
@@ -32,7 +32,7 @@ inclui ALU/controle/imediato; “core” significa `core_basic` self-checking.
 | BLT, BGE | sim | signed | comparador | sim | implementadas |
 | BLTU, BGEU | sim | unsigned | comparador | sim | implementadas |
 | JAL | sim | sim | imediato | sim | implementada |
-| JALR | não | não | não | não | não implementada |
+| JALR | sim | sim | sim | não | implementada |
 | FENCE, ECALL, EBREAK | não | não | não | não | não implementada |
 | CSR/Zicsr | não | não | não | não | não implementada |
 | MUL/DIV (extensão M) | não | não | não | não | não implementada |
@@ -42,7 +42,8 @@ inclui ALU/controle/imediato; “core” significa `core_basic` self-checking.
 - ADD/SUB e SLT/SLTU têm decodes distintos e casos negativos testados.
 - SRL/SRA usam `funct7[5]` para distinguir shift lógico e aritmético.
 - `branch_comp` decide os seis branches; `funct3` inválido nunca toma o salto.
-- JAL usa `old_pc + immediate` como alvo e grava `old_pc + 4` como link.
+- JAL usa old_pc + immediate como alvo e grava old_pc + 4 como link.
+- JALR usa rs1 + immediate como alvo, força o bit menos significativo do novo PC para zero e grava old_pc + 4 como link.
 - LUI zera a entrada A da ALU; AUIPC usa `old_pc`.
 - PC é alinhado por construção dos imediatos B/J, mas não há trap de instrução
   desalinhada.

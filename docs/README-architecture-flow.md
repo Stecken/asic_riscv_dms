@@ -177,11 +177,12 @@ sequenceDiagram
         D->>A: operand_a, operand_b, funct3
         A-->>C: branch_taken
         C->>D: pc_write=branch_taken
-    else JAL
-        C->>R: WB_J: rd=old_pc+4
-        C->>D: PC=ALUOut
+    else JAL / JALR
+        C->>R: WB_J: reg_write = 1
+        C->>D: Atualiza o PC
     end
 ```
+Para `JAL`, o endereço de destino é calculado como `old_pc + immediate`. Para `JALR`, o endereço é calculado como `rs1 + immediate`, com o bit menos significativo forçado para zero. Em ambos os casos, o endereço de retorno `(old_pc + 4)` é escrito em `rd` durante o estado `ST_WB_J`.
 
 A CPU não é pipeline. Uma instrução ocupa vários ciclos e a FSM avança pelos
 estados abaixo:
@@ -198,8 +199,8 @@ estados abaixo:
 | `ST_WB_ALU` | 7 | Escreve `ALUOut` no banco |
 | `ST_WB_MEM` | 8 | Escreve `MDR` no banco |
 | `ST_EX_B` | 9 | Avalia branch e, se tomado, instala o alvo |
-| `ST_EX_J` | 10 | Calcula/preserva alvo do `JAL` |
-| `ST_WB_J` | 11 | Escreve link e instala o alvo do jump |
+| `ST_EX_J` | 10 | Calcula o endereço de destino de `JAL` ou `JALR` |
+| `ST_WB_J` | 11 | Escreve `old_pc + 4` em `rd` e atualiza o PC |
 
 ## 5. Fetch e separação IMEM/DMEM
 
@@ -251,27 +252,23 @@ ALU é zero e não distingue todas as comparações signed/unsigned.
 
 ## 7. Jumps e writeback
 
-Para `JAL`:
+O processador implementa as instruções JAL e JALR.
 
-```text
-ID:       ALUOut = old_pc + immediate
-WB_J:     rd      = old_pc + 4
-          PC      = ALUOut
+Para `JAL`, o alvo do salto é calculado a partir de: 
+
+```
+old_pc + immediate
 ```
 
-O projeto implementa `JAL`, mas ainda não implementa `JALR`. Portanto, existe
-salto com link, mas não existe ainda o retorno padrão `JALR x0, 0(ra)` nem
-preservação automática de uma pilha de retornos.
+Para `JALR`, o alvo é calculado como:
 
-O writeback escolhe entre:
-
-```text
-result_src=00 -> ALUOut
-result_src=01 -> MDR
-result_src=10 -> old_pc + 4
+```
+rs1 + immediate
 ```
 
-Escritas em `x0` são descartadas pelo `register_file`.
+Antes de atualizar o PC, o bit menos significativo é forçado para zero, conforme especificado pela ISA RISC-V.
+
+Em ambos os casos, o endereço de retorno (old_pc + 4) é escrito em rd durante o estado ST_WB_J.
 
 ## 8. Fluxo do mini firmware
 
